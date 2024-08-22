@@ -9,10 +9,12 @@ from logging import getLogger
 from git import Repo, GitCommandError
 import shutil
 import random
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Dict
 from pydantic import BaseModel
 import dotenv
 import re
+
+from src.repo.extensions import EXTENSIONS
 
 dotenv.load_dotenv()
 
@@ -55,7 +57,6 @@ def del_file(func, path, exc_info):
     else:
         raise
 
-
 class GitRepo:
     """
     Used to manage git operations on a git repo
@@ -96,7 +97,7 @@ class GitRepo:
         self.branch_prefix = "cowboy_"
 
     @classmethod
-    def clone_repo(cls, clone_dst: Path, url: str) -> Path:
+    def clone_repo(cls, clone_dst: Path, url: str) -> "GitRepo":
         """
         Creates a clone of the repo locally
         """
@@ -129,6 +130,47 @@ class GitRepo:
         else:
             shutil.rmtree(repo_dst)
 
+    def iterate_content(self) -> Dict:
+        """
+        Iterates through the repo and returns a json that represents
+        the filepaths
+        """
+        content_dict = {}
+        for root, dirs, files in os.walk(self.repo.working_dir):
+            for file in files:
+                file_path = os.path.relpath(os.path.join(root, file), self.repo.working_dir)
+                with open(os.path.join(root, file), 'r', encoding="utf-8") as f:
+                    try:
+                        content = f.read()
+                        content_dict[file_path] = content
+
+                    # TODO: log this somewhere
+                    except UnicodeDecodeError:
+                        continue
+                    
+        return content_dict
+
+    def get_lang_and_size(self):
+        """
+        Identifies language of repo
+        """
+        max_content_length = 0
+        identified_language = None
+        lang_len = {}
+
+        content_dict = self.iterate_content()
+        for file_path, content in content_dict.items():
+            for ext, language in EXTENSIONS.items():
+                if file_path.endswith(ext) and len(content) > max_content_length:
+                    max_content_length = len(content)
+                    identified_language = language
+                    if not lang_len.get(language, None):
+                        lang_len[language] = 0
+
+                    lang_len[language] += len(content)
+
+        return identified_language, lang_len[identified_language]
+        
     def reset_to_commit(self, commit_sha, parent=None, head: int = 0):
         """
         Resets the index of the repository to a specific commit.

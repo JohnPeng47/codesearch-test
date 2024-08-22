@@ -57,13 +57,17 @@ async def create_or_find(
 
     repo_dst = None
     try:
+        repo_dst = Path(REPOS_ROOT) / repo_in.repo_name
+        git_repo = GitRepo.clone_repo(repo_dst, repo_in.url)
+        lang, sz = git_repo.get_lang_and_size()
+
+        print(lang, sz)
         repo = Repo(
             **repo_in.dict(),
-            users=curr_user
+            users=curr_user,
+            language=lang,
+            repo_size=sz
         )
-
-        repo_dst = Path(REPOS_ROOT) / repo.repo_name / gen_random_name()
-        GitRepo.clone_repo(repo_dst, repo.url)
 
         db_session.add(repo)
         db_session.commit()

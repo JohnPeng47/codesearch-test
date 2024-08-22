@@ -22,6 +22,8 @@ class Repo(Base):
     id = Column(Integer, primary_key=True)
     repo_name = Column(String)
     url = Column(String)
+    language = Column(String)
+    repo_size = Column(Integer)
 
     # remote = Column(String)
     # main = Column(String)

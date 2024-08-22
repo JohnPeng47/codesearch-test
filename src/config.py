@@ -32,6 +32,7 @@ REPOS_ROOT = "/home/ubuntu/repos"
 AWS_REGION = "us-east-2"
 
 SSH_KEY_PATH = config("SSH_KEY_PATH")
+# MAX_REPO_SIZE = 
 
 # Anonymous user
 ANON_LOGIN = True
