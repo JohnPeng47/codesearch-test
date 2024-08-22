@@ -4,7 +4,22 @@ import string
 import uuid
 import time
 import functools
+import os
+from contextlib import contextmanager
+
 from src.logger import testgen_logger
+
+@contextmanager
+def set_temp_env_var(key, value):
+    old_value = os.environ.get(key)
+    os.environ[key] = value
+    try:
+        yield
+    finally:
+        if old_value is None:
+            del os.environ[key]
+        else:
+            os.environ[key] = old_value
 
 
 # nested level get() function

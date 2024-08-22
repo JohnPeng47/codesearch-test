@@ -28,7 +28,7 @@ class TimeStampMixin(object):
         event.listen(cls, "before_update", cls._updated_at)
 
 
-class CowboyBase(BaseModel):
+class RTFSBase(BaseModel):
     class Config:
         from_attributes = True
         validate_assignment = True

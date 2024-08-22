@@ -1,12 +1,13 @@
 from starlette.config import Config
+from urllib.parse import urljoin
 
 from enum import Enum
 
 config = Config(".env")
 
 ENV = config("ENV", default="dev")
-PORT = 3000 if ENV == "release" else 3001
-API_ENDPOINT = "http://18.223.150.134:" + PORT
+PORT = int(config("PORT"))
+API_ENDPOINT = urljoin(config("HOST"), str(PORT))
 
 # JWT settings
 COWBOY_JWT_SECRET = config("DISPATCH_JWT_SECRET", default="")
@@ -16,9 +17,7 @@ COWBOY_JWT_EXP = config("DISPATCH_JWT_EXP", cast=int, default=308790000)  # Seco
 COWBOY_OPENAI_API_KEY = config("OPENAI_API_KEY")
 
 DB_PASS = config("DB_PASS")
-SQLALCHEMY_DATABASE_URI = (
-    f"postgresql://cowboyuser2:{DB_PASS}@127.0.0.1:5432/cowboytestdb"
-)
+SQLALCHEMY_DATABASE_URI = f"postgresql://postgres:{DB_PASS}@127.0.0.1:5432/codesearch"
 SQLALCHEMY_ENGINE_POOL_SIZE = 50
 
 ALEMBIC_INI_PATH = "."
@@ -29,9 +28,13 @@ AUGMENT_ROUNDS = 4 if ENV == "release" else 1
 LLM_RETRIES = 3
 AUTO_GEN_SIZE = 7
 LOG_DIR = "log"
-REPOS_ROOT = "repos"
+REPOS_ROOT = "/home/ubuntu/repos"
 AWS_REGION = "us-east-2"
 
+SSH_KEY_PATH = config("SSH_KEY_PATH")
+
+# Anonymous user
+ANON_LOGIN = True
 
 class Language(str, Enum):
     """

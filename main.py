@@ -1,5 +1,6 @@
 from typing import Optional, Final
 from contextvars import ContextVar
+import os
 
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
@@ -26,11 +27,11 @@ from src.auth.views import auth_router
 from src.repo.views import repo_router
 from src.queue.views import task_queue_router
 from src.health.views import health_router
-from src.exceptions import CowboyRunTimeException
+from src.exceptions import ClientActionException
 from src.database.core import engine
 
 from src.extensions import init_sentry
-from src.config import PORT
+from src.config import PORT, REPOS_ROOT
 
 import uuid
 
@@ -105,6 +106,14 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
     ) -> StreamingResponse:
         try:
             response = await call_next(request)
+
+        # this is an interface with client
+        except ClientActionException as e:
+            response = JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={"error" : e.message, "type": e.type}
+            )    
+
         except ValidationError as e:
             log.exception(e)
             response = JSONResponse(
@@ -119,15 +128,6 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
                     "detail": [
                         {"msg": "Unknown", "loc": ["Unknown"], "type": "Unknown"}
                     ],
-                    "error": True,
-                },
-            )
-        except CowboyRunTimeException as e:
-            log.exception(e)
-            response = JSONResponse(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                content={
-                    "detail": [{"msg": f"Runtime error: {e.message}"}],
                     "error": True,
                 },
             )
@@ -242,6 +242,9 @@ app.include_router(health_router)
 # logfire.configure(console=False)
 # logfire.instrument_fastapi(app, excluded_urls=["/task/get"])
 
+def init():
+    if not os.path.exists(REPOS_ROOT):
+        os.makedirs(REPOS_ROOT)
 
 if __name__ == "__main__":
     import argparse
@@ -253,11 +256,13 @@ if __name__ == "__main__":
 
     # logfire.configure()
 
+    init()
+
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
         port=PORT,
-        # reload=True,
+        reload=True,
         reload_excludes=["./repos"],
         # log_config=config,
     )

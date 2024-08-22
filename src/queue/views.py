@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 
 from src.database.core import get_db
 from src.auth.service import get_current_user
-from src.auth.models import CowboyUser
+from src.auth.models import User
 
 from typing import List, Set
 
@@ -18,7 +18,7 @@ task_queue_router = APIRouter()
 @task_queue_router.get("/task/list", response_model=List[Task])
 def list(
     task_queue: TaskQueue = Depends(get_queue),
-    curr_user: CowboyUser = Depends(get_current_user),
+    curr_user: User = Depends(get_current_user),
 ):
     tasks = list_tasks(task_queue=task_queue, user_id=curr_user.id, n=3)
     return tasks
@@ -38,7 +38,7 @@ def get(
     task_queue: TaskQueue = Depends(get_queue),
     # don't try to do anything with curr_user because most of the time
     # we only have user_token to work with
-    curr_user: CowboyUser = Depends(get_current_user),
+    curr_user: User = Depends(get_current_user),
     token_registry: Set[str] = Depends(get_token_registry),
     user_token: str = Depends(get_token),
     # perms: str = Depends(PermissionsDependency([TaskGetPermissions])),
@@ -67,7 +67,7 @@ def get(
 def complete(
     task: CompleteTaskRequest,
     task_queue: TaskQueue = Depends(get_queue),
-    curr_user: CowboyUser = Depends(get_current_user),
+    curr_user: User = Depends(get_current_user),
 ):
 
     task_queue = complete_task(

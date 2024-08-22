@@ -18,7 +18,7 @@ from .models import generate_token
 log = logging.getLogger(__name__)
 
 from .sm import SecretManager
-from .models import CowboyUser, UserRegister, UserCreate
+from .models import User, UserRegister, UserCreate
 
 InvalidCredentialException = HTTPException(
     status_code=HTTP_401_UNAUTHORIZED,
@@ -26,23 +26,23 @@ InvalidCredentialException = HTTPException(
 )
 
 
-def get(*, db_session, user_id: int) -> Optional[CowboyUser]:
+def get(*, db_session, user_id: int) -> Optional[User]:
     """Returns a user based on the given user id."""
-    return db_session.query(CowboyUser).filter(CowboyUser.id == user_id).one_or_none()
+    return db_session.query(User).filter(User.id == user_id).one_or_none()
 
 
-def get_by_email(*, db_session, email: str) -> Optional[CowboyUser]:
+def get_by_email(*, db_session, email: str) -> Optional[User]:
     """Returns a user object based on user email."""
-    return db_session.query(CowboyUser).filter(CowboyUser.email == email).one_or_none()
+    return db_session.query(User).filter(User.email == email).one_or_none()
 
 
-def create(*, db_session, user_in: UserRegister | UserCreate) -> CowboyUser:
+def create(*, db_session, user_in: UserRegister | UserCreate) -> User:
     """Creates a new dispatch user."""
     # pydantic forces a string password, but we really want bytes
     password = bytes(user_in.password, "utf-8")
 
     # create the user
-    user = CowboyUser(
+    user = User(
         **user_in.dict(exclude={"password", "openai_api_key"}),
         password=password,
     )
@@ -51,7 +51,7 @@ def create(*, db_session, user_in: UserRegister | UserCreate) -> CowboyUser:
 
     print("Token: ", user.token)
     # create the credentials
-    store_oai_key(user_in.openai_api_key, user.id)
+    # store_oai_key(user_in.openai_api_key, user.id)
 
     return user
 
@@ -96,7 +96,7 @@ def extract_user_email_jwt(request: Request, **kwargs):
 #     )
 
 
-def get_current_user(request: Request) -> CowboyUser:
+def get_current_user(request: Request) -> User:
     user_email = extract_user_email_jwt(request=request)
 
     if not user_email:
@@ -114,12 +114,10 @@ def get_current_user(request: Request) -> CowboyUser:
     # where we are not passed a db session, and we want to proceed with the rest
     # of endpoint logic
     except DBNotSetException:
-        print("No db set")
         return None
 
     # generic case for user not existing
     if not user:
-        print("No user")
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": "User not found"}]
         )

@@ -1,13 +1,14 @@
-from src.config import COWBOY_JWT_ALG, COWBOY_JWT_EXP, COWBOY_JWT_SECRET
+from src.config import COWBOY_JWT_ALG, COWBOY_JWT_EXP, COWBOY_JWT_SECRET, ANON_LOGIN
 from src.database.core import Base
-from src.models import TimeStampMixin, CowboyBase, PrimaryKey
+from src.models import TimeStampMixin, RTFSBase, PrimaryKey
 
+import random
 import string
 import secrets
 import bcrypt
 from jose import jwt
 from typing import Optional
-from pydantic import validator, Field, BaseModel
+from pydantic import validator, Field, BaseModel, root_validator
 from pydantic.networks import EmailStr
 from sqlalchemy import (
     ForeignKey,
@@ -18,8 +19,6 @@ from sqlalchemy import (
     Integer,
     Boolean,
 )
-from sqlalchemy.orm import relationship
-from typing import List
 from datetime import datetime, timedelta
 
 
@@ -46,6 +45,9 @@ def generate_password():
             break
     return password
 
+def generate_email():
+    return "".join([random.choice(string.ascii_letters) for _ in range(10)]) + "@hotmail.com"
+
 
 def hash_password(password: str):
     """Generates a hashed version of the provided password."""
@@ -54,8 +56,8 @@ def hash_password(password: str):
     return bcrypt.hashpw(pw, salt)
 
 
-class CowboyUser(Base, TimeStampMixin):
-    __tablename__ = "cowboy_user"
+class User(Base, TimeStampMixin):
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
     email = Column(String, unique=True)
@@ -64,9 +66,7 @@ class CowboyUser(Base, TimeStampMixin):
     experimental_features = Column(Boolean, default=False)
     admin = Column(Boolean, default=False)
 
-    repos = relationship(
-        "RepoConfig", backref="cowboy_user", cascade="all, delete-orphan"
-    )
+    repo_user_id = Column(Integer, ForeignKey('repos.id'))
 
     # search_vector = Column(
     #     TSVectorType("email", regconfig="pg_catalog.simple", weights={"email": "A"})
@@ -80,14 +80,8 @@ class CowboyUser(Base, TimeStampMixin):
         return generate_token(self.email)
 
 
-class UserBase(CowboyBase):
-    email: EmailStr
-
-    @validator("email")
-    def email_required(cls, v):
-        if not v:
-            raise ValueError("Must not be empty string and must be a email")
-        return v
+class UserBase(RTFSBase):
+    email: Optional[EmailStr]
 
 
 class UserLogin(UserBase):
@@ -101,19 +95,28 @@ class UserLogin(UserBase):
 
 
 class UserRegister(UserLogin):
-    openai_api_key: str
     password: Optional[str] = Field(None, nullable=True)
 
-    @validator("password", pre=True, always=True)
-    def password_required(cls, v):
-        # we generate a password for those that don't have one
-        password = v or generate_password()
-        return hash_password(password)
+    @root_validator(pre=True)
+    def validate_or_anon_auth(cls, values):
+        email = values.get("email", None)
+        if not ANON_LOGIN and not email:
+            raise ValueError("Email must not be empty string")
+        if ANON_LOGIN and not email:
+            values["email"] = generate_email()
+        
+        password = values.get("password", None)
+        if not password:
+            password = generate_password()
+        
+        values["password"] = hash_password(password)
+
+        return values
 
 
-class UserLoginResponse(CowboyBase):
-    token: Optional[str] = Field(None, nullable=True)
-
+# shit doesnt work when returning directly ...
+class UserLoginResponse(RTFSBase):
+    token: Optional[str] = Field(None, nullable=True) 
 
 class UserRead(UserBase):
     id: PrimaryKey
@@ -121,7 +124,7 @@ class UserRead(UserBase):
     experimental_features: Optional[bool]
 
 
-class UserUpdate(CowboyBase):
+class UserUpdate(RTFSBase):
     id: PrimaryKey
     password: Optional[str] = Field(None, nullable=True)
 
@@ -130,7 +133,7 @@ class UserUpdate(CowboyBase):
         return hash_password(str(v))
 
 
-class UserCreate(CowboyBase):
+class UserCreate(RTFSBase):
     email: EmailStr
     password: Optional[str] = Field(None, nullable=True)
 
@@ -139,7 +142,7 @@ class UserCreate(CowboyBase):
         return hash_password(str(v))
 
 
-class UserRegisterResponse(CowboyBase):
+class UserRegisterResponse(RTFSBase):
     token: Optional[str] = Field(None, nullable=True)
 
 

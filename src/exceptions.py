@@ -1,7 +1,9 @@
-from pydantic.errors import PydanticUserError
-
-
-class CowboyRunTimeException(Exception):
-    def __init__(self, message: str):
+class ClientActionException(Exception):
+    """
+    Exception type that needs to be displayed and handled in the client
+    """
+    def __init__(self, *, message, ex: Exception):
         self.message = message
-        super().__init__(message)
+        self.type = ex.__class__.__name__
+        
+        super().__init__()

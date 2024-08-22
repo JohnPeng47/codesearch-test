@@ -1,17 +1,17 @@
 from cowboy_lib.repo import GitRepo
 
 from src.database.core import get_db
-from src.models import HTTPSuccess
-from src.auth.service import get_current_user, CowboyUser
+from src.auth.service import get_current_user, User
 from src.queue.core import get_queue, TaskQueue
-from src.runner.service import RunServiceArgs, shutdown_client
+from src.exceptions import ClientActionException
 
-from .service import create_or_update, get, delete, list, clean
+from .service import create_or_find, get, delete, list
 from .models import (
-    RepoConfigCreate,
-    RepoConfigList,
-    RepoConfigGet,
-    RepoConfigRemoteCommit,
+    RepoCreate,
+    PrivateRepoAccess,
+    RepoList,
+    RepoGet,
+    RepoRemoteCommit,
 )
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -22,29 +22,30 @@ from pathlib import Path
 repo_router = APIRouter()
 
 
-@repo_router.post("/repo/create", response_model=RepoConfigCreate)
+@repo_router.post("/repo/create", response_model=RepoCreate)
 async def create_repo(
-    repo_in: RepoConfigCreate,
+    repo_in: RepoCreate,
     db_session: Session = Depends(get_db),
-    current_user: CowboyUser = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     task_queue: TaskQueue = Depends(get_queue),
 ):
-    repo = get(
-        db_session=db_session, repo_name=repo_in.repo_name, curr_user=current_user
-    )
-    if repo:
-        raise HTTPException(
-            status_code=400, detail="A repo with this name already exists."
+    try:
+        repo = get(
+            db_session=db_session, repo_name=repo_in.repo_name
         )
-
-    repo_config = await create_or_update(
-        db_session=db_session,
-        repo_in=repo_in,
-        curr_user=current_user,
-        task_queue=task_queue,
-    )
-    # need as_dict to convert cloned_folders to list
-    return repo_config.to_dict()
+        if repo:
+            return repo.to_dict()
+        
+        repo_config = await create_or_find(
+            db_session=db_session,
+            repo_in=repo_in,
+            curr_user=current_user,
+            task_queue=task_queue,
+        )
+        # need as_dict to convert cloned_folders to list
+        return repo_config.to_dict()
+    except PrivateRepoAccess as e:
+        raise ClientActionException(message="Private repo not yet supported", ex=e)
 
 
 # @repo_router.delete("/repo/delete/{repo_name}", response_model=HTTPSuccess)
@@ -83,7 +84,7 @@ async def create_repo(
 #     return HTTPSuccess()
 
 
-# @repo_router.get("/repo/get/{repo_name}", response_model=RepoConfigGet)
+# @repo_router.get("/repo/get/{repo_name}", response_model=RepoGet)
 # def get_repo(
 #     repo_name: str,
 #     db_session: Session = Depends(get_db),
@@ -97,18 +98,18 @@ async def create_repo(
 #     return repo.to_dict()
 
 
-# @repo_router.get("/repo/list", response_model=RepoConfigList)
+# @repo_router.get("/repo/list", response_model=RepoList)
 # def list_repos(
 #     db_session: Session = Depends(get_db),
 #     current_user: CowboyUser = Depends(get_current_user),
 # ):
 #     repos = list(db_session=db_session, curr_user=current_user)
-#     return RepoConfigList(repo_list=repos)
+#     return RepoList(repo_list=repos)
 
 
 # # TODO: this should return HEAD of repo.source_folder rather than the remote repo
 # # once we finish our task refactor
-# @repo_router.get("/repo/get_head/{repo_name}", response_model=RepoConfigRemoteCommit)
+# @repo_router.get("/repo/get_head/{repo_name}", response_model=RepoRemoteCommit)
 # def get_head(
 #     repo_name: str,
 #     db_session: Session = Depends(get_db),
@@ -122,5 +123,5 @@ async def create_repo(
 
 #     git_repo = GitRepo(Path(repo.source_folder))
 
-#     # return RepoConfigRemoteCommit(sha=git_repo.local_commit)
-#     return RepoConfigRemoteCommit(sha=git_repo.remote_commit)
+#     # return RepoRemoteCommit(sha=git_repo.local_commit)
+#     return RepoRemoteCommit(sha=git_repo.remote_commit)

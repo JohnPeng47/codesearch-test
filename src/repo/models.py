@@ -2,93 +2,40 @@ from cowboy_lib.coverage import TestCoverage
 
 from sqlalchemy import Column, Integer, String, JSON, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from pydantic import Field
+from pydantic import Field, root_validator
 
-from src.models import CowboyBase
+from src.models import RTFSBase
 from src.database.core import Base
 from src.config import Language
+from src.auth.models import User
 
 from typing import List, Any, Dict, Optional
 
 
-class RepoConfig(Base):
+class Repo(Base):
     """
     Stores configuration for a repository
     """
 
-    __tablename__ = "repo_config"
+    __tablename__ = "repos"
 
     id = Column(Integer, primary_key=True)
     repo_name = Column(String)
     url = Column(String)
-    source_folder = Column(String)
-    cloned_folders = Column(String)
-    # git remote and git main branch (to merge into)
-    remote = Column(String)
-    main = Column(String)
-    language = Column(String)
 
-    # keep this argument fluid, may change
-    python_conf = Column(JSON)
-    user_id = Column(Integer, ForeignKey("cowboy_user.id"))
-    is_experiment = Column(Boolean)
+    # remote = Column(String)
+    # main = Column(String)
+    # language = Column(String)
 
-    # relations
-    test_modules = relationship(
-        "TestModuleModel", backref="repo_config", cascade="all, delete-orphan"
-    )
-    nodes = relationship(
-        "NodeModel", backref="repo_config", cascade="all, delete-orphan"
-    )
-    cov_list = relationship(
-        "CoverageModel", backref="repo_config", cascade="all, delete-orphan"
-    )
-    stats = relationship("RepoStats", uselist=False, cascade="all, delete-orphan")
-
-    def __init__(
-        self,
-        repo_name,
-        url,
-        source_folder,
-        cloned_folders,
-        python_conf,
-        user_id,
-        remote,  # origin
-        main,
-        language,
-        is_experiment=False,
-    ):
-        self.repo_name = repo_name
-        self.url = url
-        self.source_folder = source_folder
-        self.cloned_folders = ",".join(cloned_folders)
-        self.python_conf = python_conf
-        self.user_id = user_id
-        self.remote = remote
-        self.main = main
-        self.language = language
-        self.is_experiment = is_experiment
+    users = relationship("User", uselist=False, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
-            "repo_name": self.repo_name,
+            # "repo_name": self.repo_name,
             "url": self.url,
-            "source_folder": self.source_folder,
-            "cloned_folders": self.cloned_folders.split(","),
-            "python_conf": self.python_conf,
-            "user_id": self.user_id,
-            "remote": self.remote,
-            "main": self.main,
-            "language": self.language,
-            "is_experiment": self.is_experiment,
         }
 
-    @property
-    def base_cov(self) -> TestCoverage:
-        return TestCoverage([cov.deserialize() for cov in self.cov_list])
-
-
-class LangConf(CowboyBase):
+class LangConf(RTFSBase):
     """
     Holds the language/framework specific settings
     for a repo
@@ -99,45 +46,42 @@ class LangConf(CowboyBase):
     interp: str
 
 
-class PythonConf(LangConf):
-    language: str = "python"
-    cov_folders: List[str]
-    test_folder: str
-    interp: str
-    pythonpath: str
-
-    def get(self, __name: str, default: Any = None) -> Any:
-        return self.dict().get(__name, default)
-
-
-class RepoConfigBase(CowboyBase):
-    repo_name: str
+class RepoBase(RTFSBase):
     url: str
-    source_folder: str
-    cloned_folders: List[str]
-    python_conf: PythonConf
+    # source_folder: str
+    # cloned_folders: List[str]
+    # python_conf: PythonConf
 
-    language: Optional[Language] = Field(default="python")
-    is_experiment: Optional[bool] = Field(default=False)
-    main: Optional[str] = Field(default="main")
-    remote: Optional[str] = Field(default="origin")
+    # language: Optional[Language] = Field(default="python")
+    # is_experiment: Optional[bool] = Field(default=False)
+    # main: Optional[str] = Field(default="main")
+    # remote: Optional[str] = Field(default="origin")
 
 
-class RepoConfigGet(RepoConfigBase):
+class RepoGet(RepoBase):
     pass
 
 
-class RepoConfigCreate(RepoConfigBase):
-    repo_name: str
+class RepoCreate(RepoBase):
+    url: str
+    repo_name: Optional[str] = Field(None, nullable=True)
+
+    @root_validator(pre=True)
+    def set_repo_name(cls, values):
+        url = values.get("url", None)
+        parts = url.rstrip('/').split('/')
+        if len(parts) >= 2:
+            values["repo_name"] = "_".join(parts[-2:])
+            return values
+
+        raise ValueError(f"Malformed GH URL: {values['url']}")
+        
+class RepoList(RTFSBase):
+    repo_list: List[RepoBase]
 
 
-class RepoConfigList(CowboyBase):
-    repo_list: List[RepoConfigBase]
-
-
-class RepoConfigRemoteCommit(CowboyBase):
+class RepoRemoteCommit(RTFSBase):
     sha: str
 
-
-# class RepoConfigDelete(BaseModel):
-#     repo_name: str
+class PrivateRepoAccess(Exception):
+    pass

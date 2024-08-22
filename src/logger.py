@@ -4,7 +4,7 @@ import logging
 import os
 from datetime import datetime
 import pytz
-import logfire
+# import logfire
 
 
 def converter(timestamp):
