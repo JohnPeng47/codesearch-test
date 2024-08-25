@@ -28,7 +28,12 @@ AUGMENT_ROUNDS = 4 if ENV == "release" else 1
 LLM_RETRIES = 3
 AUTO_GEN_SIZE = 7
 LOG_DIR = "log"
+
+# TODO: auto-create these
 REPOS_ROOT = "/home/ubuntu/repos"
+INDEX_ROOT = "/home/ubuntu/index"
+GRAPH_ROOT = "/home/ubuntu/graphs"
+
 AWS_REGION = "us-east-2"
 
 SSH_KEY_PATH = config("SSH_KEY_PATH")

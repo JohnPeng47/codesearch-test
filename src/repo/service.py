@@ -1,45 +1,53 @@
-from src.utils import gen_random_name
 from src.auth.models import User
 from src.config import REPOS_ROOT
 from src.queue.core import TaskQueue
+from src.index import get_or_create_index
 
 from .repository import GitRepo, PrivateRepoError
 from .models import Repo, RepoCreate, PrivateRepoAccess
 
 from pathlib import Path
 from logging import getLogger
-from fastapi import HTTPException
-
 
 logger = getLogger(__name__)
 
-# Return GitRepo here
-def get(*, db_session, repo_name: str) -> Repo:
-    """Returns a repo based on the given repo name."""
+def get_no_auth(*, db_session, repo_name: str) -> Repo:
+    """Returns a repo if it exists for any user"""
     return (
         db_session.query(Repo)
         .filter(Repo.repo_name == repo_name)
         .one_or_none()
     )
 
+def get_auth(*, db_session, curr_user: User, repo_name: str) -> Repo:
+    """Returns a repo if it exists for the current user"""
+    return (
+        db_session.query(Repo)
+        .filter(Repo.repo_name == repo_name, curr_user in Repo.users)
+        .one_or_none()
+    )
+
 def delete(*, db_session, curr_user: User, repo_name: str) -> Repo:
     """Deletes a repo based on the given repo name."""
 
-    repo = get(db_session=db_session, curr_user=curr_user, repo_name=repo_name)
+    repo = get_auth(db_session=db_session, curr_user=curr_user, repo_name=repo_name)
     if repo:
+        repo.users.remove(curr_user)
+        if repo.users.count() == 0:
+            print("No more users, deleting repo")
+            GitRepo.delete_repo(Path(REPOS_ROOT) / repo_name)
+
         db_session.delete(repo)
         db_session.commit()
 
-        GitRepo.delete_repo(Path(repo.source_folder))
         return repo
-
+    
     return None
 
-def list(*, db_session, curr_user: User) -> Repo:
-    """Lists all repos for a user."""
+# def list(*, db_session, curr_user: User) -> Repo:
+#     """Lists all repos for a user."""
 
-    return db_session.query(Repo).filter(Repo.user_id == curr_user.id).all()
-
+#     return db_session.query(Repo).filter(curr_user.id in Repo.users).all()
 
 async def create_or_find(
     *,
@@ -49,7 +57,7 @@ async def create_or_find(
     task_queue: TaskQueue,
 ) -> Repo:
     """Creates a new repo or returns an existing repo if we already have it downloaded"""
-    repo = get(
+    repo = get_no_auth(
         db_session=db_session, repo_name=repo_in.repo_name
     )
     if repo:
@@ -59,9 +67,11 @@ async def create_or_find(
     try:
         repo_dst = Path(REPOS_ROOT) / repo_in.repo_name
         git_repo = GitRepo.clone_repo(repo_dst, repo_in.url)
+        
+        # store the repo in the index
+        get_or_create_index(repo_in.repo_name, {})
+        
         lang, sz = git_repo.get_lang_and_size()
-
-        print(lang, sz)
         repo = Repo(
             **repo_in.dict(),
             users=curr_user,

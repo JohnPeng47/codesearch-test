@@ -5,7 +5,7 @@ from src.auth.service import get_current_user, User
 from src.queue.core import get_queue, TaskQueue
 from src.exceptions import ClientActionException
 
-from .service import create_or_find, get, delete, list
+from .service import create_or_find, get_no_auth, delete
 from .models import (
     RepoCreate,
     PrivateRepoAccess,
@@ -30,7 +30,7 @@ async def create_repo(
     task_queue: TaskQueue = Depends(get_queue),
 ):
     try:
-        repo = get(
+        repo = get_no_auth(
             db_session=db_session, repo_name=repo_in.repo_name
         )
         if repo:

@@ -72,15 +72,17 @@ class RepoCreate(RepoBase):
     def set_repo_name(cls, values):
         url = values.get("url", None)
         parts = url.rstrip('/').split('/')
+        # stip out .
+        parts[1] = parts[1].split(".")[0]
+        
         if len(parts) >= 2:
-            values["repo_name"] = "_".join(parts[-2:])
+            values["repo_name"] = "_".join(parts)
             return values
 
         raise ValueError(f"Malformed GH URL: {values['url']}")
         
 class RepoList(RTFSBase):
     repo_list: List[RepoBase]
-
 
 class RepoRemoteCommit(RTFSBase):
     sha: str
