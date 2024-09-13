@@ -25,6 +25,7 @@ from logging import getLogger
 from src.queue.core import TaskQueue
 from src.auth.views import auth_router
 from src.repo.views import repo_router
+from src.search.views import search_router
 from src.queue.views import task_queue_router
 from src.health.views import health_router
 from src.exceptions import ClientActionException
@@ -237,6 +238,7 @@ app.add_middleware(AddTaskQueueMiddleware)
 app.include_router(auth_router)
 app.include_router(repo_router)
 app.include_router(task_queue_router)
+app.include_router(search_router)
 app.include_router(health_router)
 
 # logfire.configure(console=False)

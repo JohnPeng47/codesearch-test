@@ -33,6 +33,7 @@ LOG_DIR = "log"
 REPOS_ROOT = "/home/ubuntu/repos"
 INDEX_ROOT = "/home/ubuntu/index"
 GRAPH_ROOT = "/home/ubuntu/graphs"
+SUMMARIES_ROOT = "/home/ubuntu/summaries"
 
 AWS_REGION = "us-east-2"
 

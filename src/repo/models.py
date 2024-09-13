@@ -37,28 +37,8 @@ class Repo(Base):
             "url": self.url,
         }
 
-class LangConf(RTFSBase):
-    """
-    Holds the language/framework specific settings
-    for a repo
-    """
-
-    # currently I expect only an interpreter/compiler path that points
-    # to the runtime for the targeted repo
-    interp: str
-
-
 class RepoBase(RTFSBase):
     url: str
-    # source_folder: str
-    # cloned_folders: List[str]
-    # python_conf: PythonConf
-
-    # language: Optional[Language] = Field(default="python")
-    # is_experiment: Optional[bool] = Field(default=False)
-    # main: Optional[str] = Field(default="main")
-    # remote: Optional[str] = Field(default="origin")
-
 
 class RepoGet(RepoBase):
     pass
@@ -66,7 +46,6 @@ class RepoGet(RepoBase):
 
 class RepoCreate(RepoBase):
     url: str
-    repo_name: Optional[str] = Field(None, nullable=True)
 
     @root_validator(pre=True)
     def set_repo_name(cls, values):

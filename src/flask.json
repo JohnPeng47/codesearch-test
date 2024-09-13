@@ -1,0 +1,718 @@
+[
+  {
+    "title": "User Authentication and Blog Management Feature",
+    "key_variables": [
+      "login_required",
+      "register",
+      "get_post",
+      "init_db"
+    ],
+    "summary": "This feature handles user authentication and session management, as well as blog post creation, updating, and deletion within a Flask application.",
+    "chunks": [
+      {
+        "id": "flaskr/auth.py#12.42",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\auth.py_functools_load_logged_in_user.if_user_id_is_None_.else_.g.user._",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/auth.py"
+      },
+      {
+        "id": "flaskr/auth.py#13.35",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\auth.py_register_register.return.render_template_auth_reg",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/auth.py"
+      },
+      {
+        "id": "flaskr/auth.py#14.33",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\auth.py_login_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/auth.py"
+      },
+      {
+        "id": "flaskr/blog.py#15.24",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\blog.py_from_flask_import_Bluepri_index.return.render_template_blog_ind",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/blog.py"
+      },
+      {
+        "id": "flaskr/blog.py#16.29",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\blog.py_get_post_get_post.return.post",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/blog.py"
+      },
+      {
+        "id": "flaskr/blog.py#17.23",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\blog.py_create_create.return.render_template_blog_cre",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/blog.py"
+      },
+      {
+        "id": "flaskr/blog.py#18.40",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\blog.py_update_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/blog.py"
+      },
+      {
+        "id": "flaskr/db.py#19.52",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\flaskr\\db.py_sqlite3_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/flaskr/db.py"
+      },
+      {
+        "id": "tests/conftest.py#20.31",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\examples\\tutorial\\tests\\conftest.py_os_app.os_unlink_db_path_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/examples/tutorial/tests/conftest.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "CLI Route Management for Flask Application",
+    "key_variables": [
+      "routes_command",
+      "cli",
+      "main",
+      "FlaskGroup"
+    ],
+    "summary": "This feature provides a CLI command to display and sort all registered routes in a Flask application, aiding in route management and debugging.",
+    "chunks": [
+      {
+        "id": "flask/__main__.py#30.3",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\__main__.py__",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/__main__.py"
+      },
+      {
+        "id": "flask/cli.py#98.80",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_routes_command_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Application and Session Management",
+    "key_variables": [
+      "Flask",
+      "ScriptInfo",
+      "SessionInterface",
+      "locate_app"
+    ],
+    "summary": "This module provides various utilities for managing Flask applications and handling session cookies, including locating and initializing Flask app instances, configuring session interfaces, and working with application groups.",
+    "chunks": [
+      {
+        "id": "flask/app.py#32.95",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask_Flask._The_flask_object_imple",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/cli.py#73.50",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_find_best_app_find_best_app.raise_NoAppException_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#74.23",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py__called_with_wrong_args__called_with_wrong_args.try_.finally_.del_tb",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#75.77",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_find_app_by_string_find_app_by_string.raise_NoAppException_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#76.38",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_prepare_import_locate_app_5._",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#77.23",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_locate_app_6_locate_app_6.if_app_name_is_None_.else_.return.find_app_by_string_module",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#79.24",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_ScriptInfo_ScriptInfo.__init__.self._loaded_app.None",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#80.39",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_ScriptInfo.load_app_ScriptInfo.load_app.return.app",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#87.64",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_FlaskGroup_FlaskGroup.__init__.self._loaded_plugin_commands.False",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/sessions.py#238.10",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_SessionInterface.make_null_session_SessionInterface.make_null_session.return.self_null_session_class_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      },
+      {
+        "id": "flask/sessions.py#240.10",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_SessionInterface.get_cookie_domain_SessionInterface.get_cookie_domain._type_ignore_no_any_ret",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      },
+      {
+        "id": "flask/sessions.py#241.36",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_SessionInterface.get_cookie_path_SessionInterface.get_expiration_time.return.None",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      },
+      {
+        "id": "flask/sessions.py#242.14",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_SessionInterface.should_set_cookie_SessionInterface.should_set_cookie.return.session_modified_or_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      },
+      {
+        "id": "flask/sessions.py#243.32",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_SessionInterface.open_session__lazy_sha1.return.hashlib_sha1_string_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      },
+      {
+        "id": "flask/sessions.py#244.44",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_SecureCookieSessionInterface_SecureCookieSessionInterface.open_session.try_.except_BadSignature_.return.self_session_class_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Application Core Functionality",
+    "key_variables": [
+      "Flask",
+      "JSONProvider",
+      "ConfigAttribute",
+      "App"
+    ],
+    "summary": "This set of code implements key components of a Flask application including configuration management, JSON handling, template loading, and request/response processing.",
+    "chunks": [
+      {
+        "id": "flask/app.py#33.41",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.default_config_Flask.session_interface.SecureCookieSessionInterf",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/config.py#99.46",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\config.py_from___future___import_an_ConfigAttribute.__set__.obj_config_self___name___",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/config.py"
+      },
+      {
+        "id": "flask/debughelpers.py#127.55",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\debughelpers.py_explain_template_loading_attempts_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/debughelpers.py"
+      },
+      {
+        "id": "json/provider.py#148.86",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\json\\provider.py_from___future___import_an_JSONProvider._prepare_response_obj.return.args_or_kwargs",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/json/provider.py"
+      },
+      {
+        "id": "flask/logging.py#165.22",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\logging.py_create_logger_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/logging.py"
+      },
+      {
+        "id": "sansio/app.py#167.95",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App_App._The_flask_object_imple",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      },
+      {
+        "id": "sansio/app.py#168.74",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App._The_class_of_the_objec_App.json_provider_class.DefaultJSONProvider",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      },
+      {
+        "id": "sansio/app.py#170.129",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App.__init___App.__init__.self._got_first_request.False",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      },
+      {
+        "id": "flask/templating.py#249.10",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\templating.py_Environment_Environment.__init__.self.app.app",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/templating.py"
+      },
+      {
+        "id": "flask/templating.py#251.22",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\templating.py_DispatchingJinjaLoader._get_source_explained_DispatchingJinjaLoader._get_source_explained.raise_TemplateNotFound_te",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/templating.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Response Handling and Request Dispatching",
+    "key_variables": [
+      "Flask.send_static_file",
+      "Flask.finalize_request",
+      "Flask.make_response",
+      "Flask.process_response"
+    ],
+    "summary": "This code handles the dispatching of requests and the processing of responses in a Flask application, including static file sending, error handling, request finalization, and response conversion.",
+    "chunks": [
+      {
+        "id": "flask/app.py#36.20",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.send_static_file_Flask.send_static_file.return.send_from_directory_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#49.51",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.handle_exception_Flask.handle_exception.return.self_finalize_request_ser",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#52.16",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.full_dispatch_request_Flask.full_dispatch_request.return.self_finalize_request_rv_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#53.29",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.finalize_request_Flask.finalize_request.return.response",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#54.25",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.make_default_options_response_Flask.ensure_sync.return.func",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#58.88",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.make_response_Flask.make_response._make_sure_the_body_is_a",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#59.50",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.make_response.if_not_isinstance_rv_sel_Flask.make_response.return.rv",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#61.26",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.process_response_Flask.process_response.return.response",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/blueprints.py#70.20",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\blueprints.py_Blueprint.send_static_file_Blueprint.send_static_file.return.send_from_directory_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/blueprints.py"
+      },
+      {
+        "id": "flask/helpers.py#133.46",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_make_response_make_response.return.current_app_make_response",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      },
+      {
+        "id": "flask/helpers.py#135.21",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_redirect_redirect.return._wz_redirect_location_co",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      },
+      {
+        "id": "flask/helpers.py#140.123",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_send_file_send_file.return.werkzeug_utils_send_file_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      },
+      {
+        "id": "flask/helpers.py#141.40",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_send_from_directory_send_from_directory.return.werkzeug_utils_send_from_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      },
+      {
+        "id": "json/__init__.py#147.33",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\json\\__init__.py_jsonify_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/json/__init__.py"
+      },
+      {
+        "id": "flask/sessions.py#245.46",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_SecureCookieSessionInterface.save_session_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      },
+      {
+        "id": "flask/wrappers.py#272.36",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\wrappers.py_Response_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/wrappers.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Jinja Template Environment and Flash Message Handling in Flask",
+    "key_variables": [
+      "Flask",
+      "create_jinja_environment",
+      "get_flashed_messages",
+      "_prepare_send_file_kwargs"
+    ],
+    "summary": "This feature provides the setup and configuration of the Jinja template environment along with handling flashed messages in the Flask application framework, ensuring proper rendering and session management.",
+    "chunks": [
+      {
+        "id": "flask/app.py#39.38",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.create_jinja_environment_Flask.create_jinja_environment.return.rv",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/helpers.py#139.52",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_get_flashed_messages__prepare_send_file_kwargs.return.kwargs",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Application and Request Context Management in Flask",
+    "key_variables": [
+      "Flask",
+      "AppContext",
+      "RequestContext",
+      "_AppCtxGlobals"
+    ],
+    "summary": "This feature handles the creation, management, and utilization of application and request contexts within the Flask framework, ensuring proper request handling and context-specific data storage.",
+    "chunks": [
+      {
+        "id": "flask/app.py#40.38",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.create_url_adapter_Flask.create_url_adapter.return.None",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#41.26",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.raise_routing_exception_Flask.raise_routing_exception.raise_FormDataRoutingRedi",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#64.19",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.app_context_Flask.app_context.return.AppContext_self_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#65.14",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.request_context_Flask.request_context.return.RequestContext_self_envi",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/ctx.py#109.47",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\ctx.py__AppCtxGlobals__AppCtxGlobals.get.return.self___dict___get_name_d",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/ctx.py"
+      },
+      {
+        "id": "flask/ctx.py#115.26",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\ctx.py_has_app_context_AppContext.push.appcontext_pushed_send_se",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/ctx.py"
+      },
+      {
+        "id": "flask/ctx.py#117.48",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\ctx.py_RequestContext_RequestContext.__init__.self._cv_tokens._",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/ctx.py"
+      },
+      {
+        "id": "flask/debughelpers.py#123.24",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\debughelpers.py_DebugFilesKeyError_DebugFilesKeyError.__str__.return.self_msg",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/debughelpers.py"
+      },
+      {
+        "id": "flask/debughelpers.py#124.28",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\debughelpers.py_FormDataRoutingRedirect_FormDataRoutingRedirect.__init__.super___init___join_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/debughelpers.py"
+      },
+      {
+        "id": "flask/debughelpers.py#125.23",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\debughelpers.py_attach_enctype_error_multidict_attach_enctype_error_multidict.request.files.__class__.newcls",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/debughelpers.py"
+      },
+      {
+        "id": "flask/globals.py#128.51",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\globals.py_from___future___import_an_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/globals.py"
+      },
+      {
+        "id": "flask/sessions.py#234.48",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sessions.py_from___future___import_an_SessionMixin.accessed.True",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sessions.py"
+      },
+      {
+        "id": "flask/testing.py#260.48",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\testing.py_FlaskClient.session_transaction_FlaskClient.session_transaction.self__update_cookies_from",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/testing.py"
+      },
+      {
+        "id": "flask/wrappers.py#269.75",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\wrappers.py_from___future___import_an_Request.endpoint.return.None",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/wrappers.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Application Server and CLI Command Management",
+    "key_variables": [
+      "Flask",
+      "FlaskGroup",
+      "run_command",
+      "get_debug_flag"
+    ],
+    "summary": "These code chunks manage running the Flask development server and handle various command-line interface (CLI) operations for Flask applications.",
+    "chunks": [
+      {
+        "id": "flask/app.py#44.56",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.run.if_os_environ_get_FLASK__Flask.run.try_.finally_.self._got_first_request.False",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/cli.py#91.39",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_FlaskGroup.make_context__path_is_ancestor.return.os_path_join_path_other_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/cli.py#96.111",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_run_command_run_command.run_simple_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "flask/helpers.py#129.31",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_from___future___import_an_get_debug_flag.return.bool_val_and_val_lower_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      },
+      {
+        "id": "flask/helpers.py#130.24",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_get_load_dotenv_stream_with_context_3._",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      },
+      {
+        "id": "flask/templating.py#254.32",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\templating.py_render_template_string__stream.return.rv",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/templating.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Testing Utilities",
+    "key_variables": [
+      "Flask",
+      "App",
+      "FlaskClient",
+      "FlaskCliRunner"
+    ],
+    "summary": "This collection of classes and methods provides utilities for creating test clients and CLI runners to facilitate testing of Flask applications' HTTP endpoints and command-line commands.",
+    "chunks": [
+      {
+        "id": "flask/app.py#45.56",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.test_client_Flask.test_client.return.cls_type_ignore",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/app.py#46.15",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.test_cli_runner_Flask.test_cli_runner._type_ignore",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "sansio/app.py#169.49",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App._A_subclass_of_class__App.response_class",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      },
+      {
+        "id": "flask/testing.py#259.36",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\testing.py__werkzeug_version_FlaskClient.__init__.self.environ_base._",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/testing.py"
+      },
+      {
+        "id": "flask/testing.py#263.34",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\testing.py_FlaskCliRunner_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/testing.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Request Context Testing",
+    "key_variables": [
+      "Flask",
+      "test_request_context",
+      "EnvironBuilder",
+      "json_dumps"
+    ],
+    "summary": "This code provides utility classes and methods to create and manage request contexts for testing Flask applications, allowing simulation of request handling without deploying a full server.",
+    "chunks": [
+      {
+        "id": "flask/app.py#66.54",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\app.py_Flask.test_request_context_Flask.test_request_context.try_.finally_.builder_close_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/app.py"
+      },
+      {
+        "id": "flask/testing.py#258.68",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\testing.py_EnvironBuilder_EnvironBuilder.json_dumps.return.self_app_json_dumps_obj_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/testing.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Blueprint and Command Registration System",
+    "key_variables": [
+      "Blueprint",
+      "AppGroup",
+      "App",
+      "register_blueprint"
+    ],
+    "summary": "This feature provides a system for registering and managing Flask blueprints and CLI commands within an application, ensuring modular organization and contextualization of commands.",
+    "chunks": [
+      {
+        "id": "flask/blueprints.py#68.52",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\blueprints.py_from___future___import_an_Blueprint.__init__.self.cli.name.self_name",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/blueprints.py"
+      },
+      {
+        "id": "flask/cli.py#82.22",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\cli.py_AppGroup_AppGroup.command.return.decorator",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/cli.py"
+      },
+      {
+        "id": "sansio/app.py#180.33",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App.register_blueprint_App.iter_blueprints.return.self_blueprints_values_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Application Configuration Management",
+    "key_variables": [
+      "Config",
+      "App",
+      "jinja_env",
+      "make_config"
+    ],
+    "summary": "This feature manages configuration settings for the application, providing utility methods to populate configuration from files, modules, and environment variables, along with creating and handling the Jinja environment for template rendering.",
+    "chunks": [
+      {
+        "id": "flask/config.py#100.50",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\config.py_Config_Config.__init__.self.root_path.root_path",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/config.py"
+      },
+      {
+        "id": "sansio/app.py#174.27",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App.jinja_env_App.make_config.return.self_config_class_root_pa",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Blueprint and Scaffold Utilities",
+    "key_variables": [
+      "get_root_path",
+      "_split_blueprint_path",
+      "Scaffold",
+      "_default_template_ctx_processor"
+    ],
+    "summary": "This set of code provides utilities for handling module paths, blueprint splitting, and setting up Scaffold instances with various request and error handling structures in a web framework.",
+    "chunks": [
+      {
+        "id": "flask/helpers.py#142.65",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\helpers.py_get_root_path_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/helpers.py"
+      },
+      {
+        "id": "sansio/scaffold.py#216.140",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\scaffold.py_Scaffold.__init___Scaffold.__init__.self.url_default_functions.defaultdict_list_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/scaffold.py"
+      },
+      {
+        "id": "flask/templating.py#248.12",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\templating.py__default_template_ctx_processor__default_template_ctx_processor.return.rv",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/templating.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Jinja2 Template Loader Initialization",
+    "key_variables": [
+      "App",
+      "DispatchingJinjaLoader",
+      "create_global_jinja_loader",
+      "get_source"
+    ],
+    "summary": "This feature involves setting up and managing the Jinja2 template loader within a Flask application and its blueprints, providing flexibility in how templates are sourced.",
+    "chunks": [
+      {
+        "id": "sansio/app.py#177.11",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App.create_global_jinja_loader_App.create_global_jinja_loader.return.DispatchingJinjaLoader_se",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      },
+      {
+        "id": "flask/templating.py#250.13",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\templating.py_DispatchingJinjaLoader_DispatchingJinjaLoader.get_source.return.self__get_source_fast_env",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/templating.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "URL Rule Handling and Registration",
+    "key_variables": [
+      "App",
+      "BlueprintSetupState",
+      "_endpoint_from_view_func",
+      "add_url_rule"
+    ],
+    "summary": "This code provides functionality for adding URL rules and registering corresponding view functions within an application or blueprint, ensuring correct endpoint generation and method handling.",
+    "chunks": [
+      {
+        "id": "sansio/app.py#181.57",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\app.py_App.add_url_rule_App.add_url_rule.if_view_func_is_not_None_.self_view_functions_endpo",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/app.py"
+      },
+      {
+        "id": "sansio/blueprints.py#195.29",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\blueprints.py_BlueprintSetupState.add_url_rule_BlueprintSetupState.add_url_rule.self_app_add_url_rule_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/blueprints.py"
+      },
+      {
+        "id": "sansio/scaffold.py#231.14",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\scaffold.py__endpoint_from_view_func__path_is_relative_to.try_.except_ValueError_.return.False",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/scaffold.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Blueprints and Template Loading",
+    "key_variables": [
+      "Blueprint",
+      "Scaffold",
+      "DispatchingJinjaLoader",
+      "_get_source_fast"
+    ],
+    "summary": "This feature manages the blueprint mechanism for organizing routes and app-related functions in a Flask application, along with a custom Jinja template loader for dispatching templates across blueprints.",
+    "chunks": [
+      {
+        "id": "sansio/blueprints.py#196.53",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\blueprints.py_Blueprint_Blueprint._got_registered_once.False",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/blueprints.py"
+      },
+      {
+        "id": "sansio/scaffold.py#215.21",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\sansio\\scaffold.py_Scaffold_Scaffold._static_url_path.None",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/sansio/scaffold.py"
+      },
+      {
+        "id": "flask/templating.py#252.32",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\templating.py_DispatchingJinjaLoader._get_source_fast_DispatchingJinjaLoader.list_templates.return.list_result_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/templating.py"
+      }
+    ],
+    "children": []
+  },
+  {
+    "title": "Flask Application Template Rendering and Routes Management",
+    "key_variables": [
+      "_render",
+      "render_template",
+      "app",
+      "RenderTemplateView"
+    ],
+    "summary": "This feature handles template rendering and routing within a Flask web application, including diverse response formats and types, and asynchronous endpoint support.",
+    "chunks": [
+      {
+        "id": "flask/templating.py#253.24",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\src\\flask\\templating.py__render_render_template.return._render_app_template_co",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/src/flask/templating.py"
+      },
+      {
+        "id": "typing/typing_route.py#494.112",
+        "og_id": "C:\\Users\\jpeng\\Documents\\projects\\test_rtfs\\tests\\repos\\flask\\tests\\typing\\typing_route.py_from___future___import_an_",
+        "file_path": "C:/Users/jpeng/Documents/projects/test_rtfs/tests/repos/flask/tests/typing/typing_route.py"
+      }
+    ],
+    "children": []
+  }
+]

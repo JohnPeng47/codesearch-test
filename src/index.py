@@ -7,6 +7,7 @@ from codesearch.moatless import FileRepository
 from llama_index.core.storage.docstore import SimpleDocumentStore
 
 from rtfs.chunk_resolution.chunk_graph import ChunkGraph
+from rtfs.chunk_resolution.summarize import Summarizer
 from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT
 
 
@@ -49,7 +50,7 @@ def read_chunks(repo_name: str):
     return code_index._docstore.docs.values()
 
 
-def create_chunk_graph(repo_name: str):
+def create_chunk_graph(repo_name: str, summarize: bool = False):
     repo_path = os.path.join(REPOS_ROOT, repo_name)
     persist_dir = os.path.join(INDEX_ROOT, repo_name)
     save_path = os.path.join(GRAPH_ROOT, repo_name)
@@ -58,8 +59,12 @@ def create_chunk_graph(repo_name: str):
     cg = ChunkGraph.from_chunks(repo_path, nodes)
 
     cg.cluster()
+    
+    if summarize:
+        summarizer = Summarizer()
+        summarizer.summarize(cg, user_confirm=False)
+        
     cg.to_json(save_path)
-
 
 # chunks = create_chunk_graph(
 #     Path("tests/repos/index/moatless-tools"),
