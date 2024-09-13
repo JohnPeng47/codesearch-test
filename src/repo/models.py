@@ -72,7 +72,8 @@ class RepoCreate(RepoBase):
 
 
 class RepoList(RTFSBase):
-    repo_list: List[RepoBase]
+    user_repos: List[RepoBase]
+    recommended_repos: List[RepoBase]
 
 
 class RepoRemoteCommit(RTFSBase):

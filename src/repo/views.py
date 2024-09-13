@@ -5,7 +5,7 @@ from src.auth.service import get_current_user, User
 from src.queue.core import get_queue, TaskQueue
 from src.exceptions import ClientActionException
 
-from .service import create_or_find, get_no_auth, list_repos_by_views, delete
+from .service import create_or_find, get_no_auth, list_repos, delete
 from .models import (
     RepoCreate,
     PrivateRepoAccess,
@@ -51,8 +51,8 @@ def list_repos(
     db_session: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    repos = list_repos_by_views(db_session=db_session, curr_user=current_user)
-    return RepoList(repo_list=repos)
+    user, recommended = list_repos(db_session=db_session, curr_user=current_user)
+    return RepoList(user_repos=user, recommended_repos=recommended)
 
 
 # @repo_router.delete("/repo/delete/{repo_name}", response_model=HTTPSuccess)

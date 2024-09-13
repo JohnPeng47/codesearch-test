@@ -44,16 +44,18 @@ def delete(*, db_session, curr_user: User, repo_name: str) -> Repo:
     return None
 
 
-def list_repos_by_views(*, db_session, curr_user: User):
+def list_repos(*, db_session, curr_user: User):
     """
-    Lists all repos for a user, ordered by total views in descending order.
+    Lists all the repos on the user's frontpage
     """
-    return (
+    recommended_repos = (
         db_session.query(Repo)
         .filter(Repo.users.contains(curr_user))
         .order_by(Repo.views.desc())
         .all()
     )
+    user_repos = db_session.query(Repo).filter(Repo.users.contains(curr_user)).all()
+    return user_repos, recommended_repos
 
 
 # def list(*, db_session, curr_user: User) -> Repo:
