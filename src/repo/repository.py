@@ -24,18 +24,22 @@ log = getLogger(__name__)
 class NoRemoteException(Exception):
     pass
 
+
 class NoMainBranch(Exception):
     pass
+
 
 class PrivateRepoError(Exception):
     pass
 
+
 def http_to_ssh(url):
     """Convert HTTP(S) URL to SSH URL."""
-    match = re.match(r'https?://(?:www\.)?github\.com/(.+)/(.+)\.git', url)
+    match = re.match(r"https?://(?:www\.)?github\.com/(.+)/(.+)\.git", url)
     if match:
         return f"git@github.com:{match.group(1)}/{match.group(2)}.git"
     return url  # Return original if not a GitHub HTTP(S) URL
+
 
 def del_file(func, path, exc_info):
     """
@@ -56,6 +60,7 @@ def del_file(func, path, exc_info):
         func(path)
     else:
         raise
+
 
 class GitRepo:
     """
@@ -104,7 +109,6 @@ class GitRepo:
         ssh_url = http_to_ssh(url)
         if not os.path.exists(clone_dst):
             os.makedirs(clone_dst)
-            
         try:
             Repo.clone_from(ssh_url, clone_dst)
 
@@ -112,7 +116,7 @@ class GitRepo:
         except GitCommandError as e:
             if "Permission denied (publickey)." in str(e):
                 raise PrivateRepoError
-            
+
             raise e
 
     @classmethod
@@ -138,8 +142,10 @@ class GitRepo:
         content_dict = {}
         for root, dirs, files in os.walk(self.repo.working_dir):
             for file in files:
-                file_path = os.path.relpath(os.path.join(root, file), self.repo.working_dir)
-                with open(os.path.join(root, file), 'r', encoding="utf-8") as f:
+                file_path = os.path.relpath(
+                    os.path.join(root, file), self.repo.working_dir
+                )
+                with open(os.path.join(root, file), "r", encoding="utf-8") as f:
                     try:
                         content = f.read()
                         content_dict[file_path] = content
@@ -147,7 +153,7 @@ class GitRepo:
                     # TODO: log this somewhere
                     except UnicodeDecodeError:
                         continue
-                    
+
         return content_dict
 
     def get_lang_and_size(self):
@@ -170,7 +176,7 @@ class GitRepo:
                     lang_len[language] += len(content)
 
         return identified_language, lang_len[identified_language]
-        
+
     def reset_to_commit(self, commit_sha, parent=None, head: int = 0):
         """
         Resets the index of the repository to a specific commit.

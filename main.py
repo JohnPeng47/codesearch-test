@@ -112,8 +112,8 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
         except ClientActionException as e:
             response = JSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                content={"error" : e.message, "type": e.type}
-            )    
+                content={"error": e.message, "type": e.type},
+            )
 
         except ValidationError as e:
             log.exception(e)
@@ -244,9 +244,11 @@ app.include_router(health_router)
 # logfire.configure(console=False)
 # logfire.instrument_fastapi(app, excluded_urls=["/task/get"])
 
+
 def init():
     if not os.path.exists(REPOS_ROOT):
         os.makedirs(REPOS_ROOT)
+
 
 if __name__ == "__main__":
     import argparse

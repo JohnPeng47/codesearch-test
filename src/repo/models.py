@@ -9,7 +9,8 @@ from src.database.core import Base
 from src.config import Language
 from src.auth.models import User
 
-from typing import List, Any, Dict, Optional
+import re
+from typing import List
 
 
 class Repo(Base):
@@ -24,6 +25,7 @@ class Repo(Base):
     url = Column(String)
     language = Column(String)
     repo_size = Column(Integer)
+    views = Column(Integer)
 
     # remote = Column(String)
     # main = Column(String)
@@ -37,8 +39,10 @@ class Repo(Base):
             "url": self.url,
         }
 
+
 class RepoBase(RTFSBase):
     url: str
+
 
 class RepoGet(RepoBase):
     pass
@@ -48,23 +52,32 @@ class RepoCreate(RepoBase):
     url: str
 
     @root_validator(pre=True)
-    def set_repo_name(cls, values):
-        url = values.get("url", None)
-        parts = url.rstrip('/').split('/')
-        # stip out .
-        parts[1] = parts[1].split(".")[0]
-        
-        if len(parts) >= 2:
-            values["repo_name"] = "_".join(parts)
-            return values
+    def validate_url(cls, values):
+        url = values.get("url")
+        if not url:
+            raise ValueError("URL is required")
 
-        raise ValueError(f"Malformed GH URL: {values['url']}")
-        
+        # Validate GitHub URL format
+        github_http_pattern = r"^https?://github\.com/[\w.-]+/[\w.-]+(?:\.git)?$"
+        github_ssh_pattern = r"^git@github\.com:[\w.-]+/[\w.-]+(?:\.git)?$"
+
+        if not (
+            re.match(github_http_pattern, url) or re.match(github_ssh_pattern, url)
+        ):
+            raise ValueError(
+                "Invalid GitHub URL format. Must be either HTTP(S) or SSH form."
+            )
+
+        return values
+
+
 class RepoList(RTFSBase):
     repo_list: List[RepoBase]
 
+
 class RepoRemoteCommit(RTFSBase):
     sha: str
+
 
 class PrivateRepoAccess(Exception):
     pass

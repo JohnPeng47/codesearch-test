@@ -5,7 +5,7 @@ from src.auth.service import get_current_user, User
 from src.queue.core import get_queue, TaskQueue
 from src.exceptions import ClientActionException
 
-from .service import create_or_find, get_no_auth, delete
+from .service import create_or_find, get_no_auth, list_repos_by_views, delete
 from .models import (
     RepoCreate,
     PrivateRepoAccess,
@@ -30,12 +30,10 @@ async def create_repo(
     task_queue: TaskQueue = Depends(get_queue),
 ):
     try:
-        repo = get_no_auth(
-            db_session=db_session, repo_name=repo_in.repo_name
-        )
+        repo = get_no_auth(db_session=db_session, repo_name=repo_in.repo_name)
         if repo:
             return repo.to_dict()
-        
+
         repo_config = await create_or_find(
             db_session=db_session,
             repo_in=repo_in,
@@ -46,6 +44,15 @@ async def create_repo(
         return repo_config.to_dict()
     except PrivateRepoAccess as e:
         raise ClientActionException(message="Private repo not yet supported", ex=e)
+
+
+@repo_router.get("/repo/list", response_model=RepoList)
+def list_repos(
+    db_session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repos = list_repos_by_views(db_session=db_session, curr_user=current_user)
+    return RepoList(repo_list=repos)
 
 
 # @repo_router.delete("/repo/delete/{repo_name}", response_model=HTTPSuccess)
@@ -96,16 +103,6 @@ async def create_repo(
 #             status_code=400, detail="A repo with this name does not exists."
 #         )
 #     return repo.to_dict()
-
-
-# @repo_router.get("/repo/list", response_model=RepoList)
-# def list_repos(
-#     db_session: Session = Depends(get_db),
-#     current_user: CowboyUser = Depends(get_current_user),
-# ):
-#     repos = list(db_session=db_session, curr_user=current_user)
-#     return RepoList(repo_list=repos)
-
 
 # # TODO: this should return HEAD of repo.source_folder rather than the remote repo
 # # once we finish our task refactor
