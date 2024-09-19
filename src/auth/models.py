@@ -1,6 +1,7 @@
 from src.config import COWBOY_JWT_ALG, COWBOY_JWT_EXP, COWBOY_JWT_SECRET, ANON_LOGIN
 from src.database.core import Base
 from src.models import TimeStampMixin, RTFSBase, PrimaryKey
+from src.model_relations import user_repo
 
 import random
 import string
@@ -10,6 +11,7 @@ from jose import jwt
 from typing import Optional
 from pydantic import validator, Field, BaseModel, root_validator
 from pydantic.networks import EmailStr
+from sqlalchemy.orm import relationship
 from sqlalchemy import (
     ForeignKey,
     DateTime,
@@ -67,10 +69,7 @@ class User(Base, TimeStampMixin):
     admin = Column(Boolean, default=False)
 
     repo_user_id = Column(Integer, ForeignKey('repos.id'))
-
-    # search_vector = Column(
-    #     TSVectorType("email", regconfig="pg_catalog.simple", weights={"email": "A"})
-    # )
+    repos = relationship("Repo", secondary=user_repo, uselist=True, back_populates="users")
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode("utf-8"), self.password)

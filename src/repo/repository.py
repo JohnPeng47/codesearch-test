@@ -33,13 +33,6 @@ class PrivateRepoError(Exception):
     pass
 
 
-def http_to_ssh(url):
-    """Convert HTTP(S) URL to SSH URL."""
-    match = re.match(r"https?://(?:www\.)?github\.com/(.+)/(.+)\.git", url)
-    if match:
-        return f"git@github.com:{match.group(1)}/{match.group(2)}.git"
-    return url  # Return original if not a GitHub HTTP(S) URL
-
 
 def del_file(func, path, exc_info):
     """
@@ -106,11 +99,10 @@ class GitRepo:
         """
         Creates a clone of the repo locally
         """
-        ssh_url = http_to_ssh(url)
         if not os.path.exists(clone_dst):
             os.makedirs(clone_dst)
         try:
-            Repo.clone_from(ssh_url, clone_dst)
+            Repo.clone_from(url, clone_dst)
 
             return cls(clone_dst)
         except GitCommandError as e:

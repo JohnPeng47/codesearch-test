@@ -9,18 +9,23 @@ from .service import create_or_find, get_no_auth, list_repos, delete
 from .models import (
     RepoCreate,
     PrivateRepoAccess,
-    RepoList,
-    RepoGet,
-    RepoRemoteCommit,
+    RepoListResponse,
+    RepoResponse,
 )
 
+import re
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pathlib import Path
 
-
 repo_router = APIRouter()
 
+def http_to_ssh(url):
+    """Convert HTTP(S) URL to SSH URL."""
+    match = re.match(r"https?://(?:www\.)?github\.com/(.+)/(.+)\.git", url)
+    if match:
+        return f"git@github.com:{match.group(1)}/{match.group(2)}.git"
+    return url  # Return original if not a GitHub HTTP(S) URL
 
 @repo_router.post("/repo/create", response_model=RepoCreate)
 async def create_repo(
@@ -30,10 +35,6 @@ async def create_repo(
     task_queue: TaskQueue = Depends(get_queue),
 ):
     try:
-        repo = get_no_auth(db_session=db_session, repo_name=repo_in.repo_name)
-        if repo:
-            return repo.to_dict()
-
         repo_config = await create_or_find(
             db_session=db_session,
             repo_in=repo_in,
@@ -46,13 +47,17 @@ async def create_repo(
         raise ClientActionException(message="Private repo not yet supported", ex=e)
 
 
-@repo_router.get("/repo/list", response_model=RepoList)
-def list_repos(
+@repo_router.get("/repo/list", response_model=RepoListResponse)
+def get_user_and_recommended_repos(
     db_session: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     user, recommended = list_repos(db_session=db_session, curr_user=current_user)
-    return RepoList(user_repos=user, recommended_repos=recommended)
+    print(current_user.email, user, recommended)
+    return RepoListResponse(
+        user_repos=[RepoResponse(name=repo.repo_name) for repo in user], 
+        recommended_repos=[RepoResponse(name=recommended.repo_name) for recommended in recommended]
+    )
 
 
 # @repo_router.delete("/repo/delete/{repo_name}", response_model=HTTPSuccess)
