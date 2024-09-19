@@ -27,10 +27,6 @@ class Repo(Base):
     # TODO: probably want to make this a separate RepoStats table
     views = Column(Integer)
 
-    # remote = Column(String)
-    # main = Column(String)
-    # language = Column(String)
-
     users = relationship("User", secondary=user_repo, uselist=True, cascade="all, delete-orphan", back_populates="repos", single_parent=True)
 
     def to_dict(self):

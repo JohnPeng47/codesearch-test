@@ -126,7 +126,7 @@ class GitRepo:
         else:
             shutil.rmtree(repo_dst)
 
-    def iterate_content(self) -> Dict:
+    def to_json(self) -> Dict:
         """
         Iterates through the repo and returns a json that represents
         the filepaths
@@ -156,9 +156,11 @@ class GitRepo:
         identified_language = None
         lang_len = {}
 
-        content_dict = self.iterate_content()
+        content_dict = self.to_json()
         for file_path, content in content_dict.items():
             for ext, language in EXTENSIONS.items():
+                if language == "JSON":
+                    continue
                 if file_path.endswith(ext) and len(content) > max_content_length:
                     max_content_length = len(content)
                     identified_language = language

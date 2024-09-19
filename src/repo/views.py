@@ -5,7 +5,7 @@ from src.auth.service import get_current_user, User
 from src.queue.core import get_queue, TaskQueue
 from src.exceptions import ClientActionException
 
-from .service import create_or_find, get_no_auth, list_repos, delete
+from .service import create_or_find, list_repos, delete
 from .models import (
     RepoCreate,
     PrivateRepoAccess,

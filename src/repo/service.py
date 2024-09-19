@@ -12,40 +12,30 @@ from logging import getLogger
 
 logger = getLogger(__name__)
 
-def extract_gh_url(url):
-    http_pattern = r'https?://github\.com/([^/]+)/([^/]+)\.git'
-    ssh_pattern = r'git@github\.com:([^/]+)/([^/]+)\.git'
-    
-    # Try matching HTTP(S) pattern
-    http_match = re.match(http_pattern, url)
-    if http_match:
-        return http_match.groups()
-    
-    # Try matching SSH pattern
-    ssh_match = re.match(ssh_pattern, url)
-    if ssh_match:
-        return ssh_match.groups()
-    
-    return None, None
-
-def get_no_auth(*, db_session, gh_url: str) -> Repo:
-    """Returns a repo if it exists for any user"""
-    return db_session.query(Repo).filter(Repo.url == gh_url).one_or_none()
-
-
-def get_auth(*, db_session, curr_user: User, gh_url: str) -> Repo:
+def get_repo(*, db_session, curr_user: User, owner: str, repo_name: str) -> Repo:
     """Returns a repo if it exists for the current user"""
-    return (
+
+    # TODO: do we need this?
+    existing_user_repo = (
         db_session.query(Repo)
-        .filter(Repo.url == gh_url, curr_user in Repo.users)
+        .filter(Repo.owner == owner, Repo.repo_name == repo_name, curr_user in Repo.users)
         .one_or_none()
     )
+    if existing_user_repo:
+        return existing_user_repo
+    
+    existing_global_repo = (
+        db_session.query(Repo)
+        .filter(Repo.owner == owner, Repo.repo_name == repo_name)
+        .one_or_none()
+    )
+    return existing_global_repo
 
 
 def delete(*, db_session, curr_user: User, repo_name: str) -> Repo:
     """Deletes a repo based on the given repo name."""
 
-    repo = get_auth(db_session=db_session, curr_user=curr_user, repo_name=repo_name)
+    repo = get_repo(db_session=db_session, curr_user=curr_user, repo_name=repo_name)
     if repo:
         repo.users.remove(curr_user)
         if repo.users.count() == 0:
@@ -59,7 +49,6 @@ def delete(*, db_session, curr_user: User, repo_name: str) -> Repo:
 
     return None
 
-
 def list_repos(*, db_session, curr_user: User) -> Tuple[List[Repo], List[Repo]]:
     """
     Lists all the repos on the user's frontpage
@@ -72,6 +61,13 @@ def list_repos(*, db_session, curr_user: User) -> Tuple[List[Repo], List[Repo]]:
     user_repos = db_session.query(Repo).filter(Repo.users.contains(curr_user)).all()
     return user_repos, recommended_repos
 
+def get_repo_contents(*, db_session, curr_user: User, repo_name: str) -> Repo:
+    """
+    Returns the contents of a repo
+    """
+    repo = get_repo(db_session=db_session, curr_user=curr_user, repo_name=repo_name)
+    return GitRepo(repo.file_path).to_json()
+
 async def create_or_find(
     *,
     db_session,
@@ -80,11 +76,13 @@ async def create_or_find(
     task_queue: TaskQueue,
 ) -> Repo:
     """Creates a new repo or returns an existing repo if we already have it downloaded"""
-    repo = get_no_auth(db_session=db_session, gh_url=repo_in.url)
-    if repo:
-        if curr_user not in repo.users:
+
+    existing_repo = get_repo(db_session=db_session, curr_user=curr_user, 
+                             owner=repo_in.owner, repo_name=repo_in.repo_name)
+    if existing_repo:
+        if curr_user not in existing_repo.users:
             # add mapping between user and existing repo
-            repo.users.append(curr_user)
+            existing_repo.users.append(curr_user)
             db_session.add(repo)
             db_session.commit()
             
