@@ -8,6 +8,7 @@ from alembic import context
 from src.database.core import Base  # Wherever your Base is defined
 from src.auth.models import User
 from src.repo.models import Repo
+from src.model_relations import user_repo
 
 from src.config import SQLALCHEMY_DATABASE_URI
 
