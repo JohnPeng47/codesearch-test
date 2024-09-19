@@ -1,13 +1,18 @@
 from starlette.config import Config
 from urllib.parse import urljoin
+import os
 
 from enum import Enum
 
 config = Config(".env")
 
 ENV = config("ENV", default="dev")
-PORT = int(config("PORT"))
-API_ENDPOINT = urljoin(config("HOST"), str(PORT))
+CODESEARCH_DIR = (
+    "/home/ubuntu"
+    if ENV == "release"
+    else r"C:\Users\jpeng\Documents\projects\codesearch-backend\data"
+)
+PORT = int(config("PORT", default=3000))
 
 # JWT settings
 COWBOY_JWT_SECRET = config("DISPATCH_JWT_SECRET", default="")
@@ -29,15 +34,12 @@ LLM_RETRIES = 3
 AUTO_GEN_SIZE = 7
 LOG_DIR = "log"
 
-# TODO: auto-create these
-REPOS_ROOT = "/home/ubuntu/repos"
-INDEX_ROOT = "/home/ubuntu/index"
-GRAPH_ROOT = "/home/ubuntu/graphs"
-SUMMARIES_ROOT = "/home/ubuntu/summaries"
+REPOS_ROOT = os.path.join(CODESEARCH_DIR, "repo")
+INDEX_ROOT = os.path.join(CODESEARCH_DIR, "index")
+GRAPH_ROOT = os.path.join(CODESEARCH_DIR, "graphs")
+SUMMARIES_ROOT = os.path.join(CODESEARCH_DIR, "summaries")
 
 AWS_REGION = "us-east-2"
-
-SSH_KEY_PATH = config("SSH_KEY_PATH")
 # MAX_REPO_SIZE =
 
 # Anonymous user

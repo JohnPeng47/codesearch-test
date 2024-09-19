@@ -2,3 +2,8 @@
 	path = cowboy_lib
 	url = git@github.com:JohnPeng47/cowboy-lib.git
     branch = main
+
+[submodule "codesearch"]
+	path = codesearch
+	url = git@github.com:JohnPeng47/codesearch.git
+    branch = main

@@ -1,5 +1,5 @@
 import os
-from config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT, SUMMARIES_ROOT
+from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT, SUMMARIES_ROOT
 
 
 def create_directories():
