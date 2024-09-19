@@ -61,7 +61,7 @@ class RepoCreate(BaseModel):
             raise ValueError("URL is required")
 
         patterns = [
-            r"^https?://github\.com/([\w.-]+)/([\w.-]+)(?:\.git)?$",
+            r"^https?://github\.com/([\w.-]+)/([\w.-]+)\.git?$",
             r"^git@github\.com:([\w.-]+)/([\w.-]+)(?:\.git)?$",
         ]
 

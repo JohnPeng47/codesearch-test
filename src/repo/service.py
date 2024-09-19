@@ -82,7 +82,6 @@ async def create_or_find(
     """Creates a new repo or returns an existing repo if we already have it downloaded"""
     repo = get_no_auth(db_session=db_session, gh_url=repo_in.url)
     if repo:
-        print("Old repo users: ", repo.users)
         if curr_user not in repo.users:
             # add mapping between user and existing repo
             repo.users.append(curr_user)
@@ -93,7 +92,6 @@ async def create_or_find(
 
     repo_dst = None
     try:
-        print("Creating new repo")
         repo_dst = Path(REPOS_ROOT) / (repo_in.owner + "_" + repo_in.repo_name)
         git_repo = GitRepo.clone_repo(repo_dst, repo_in.url)
 
