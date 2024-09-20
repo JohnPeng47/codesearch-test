@@ -1,12 +1,12 @@
 from src.auth.models import User
 from src.queue.core import TaskQueue
-from src.index.service import get_or_create_index
-from src.graph.service import create_chunk_graph
+from src.queue.service import enqueue_task_and_wait
 
 from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT
 
 from .repository import GitRepo, PrivateRepoError
 from .models import Repo, RepoCreate, PrivateRepoAccess, repo_ident
+from .tasks import InitIndexGraphTask
 
 import shutil
 from typing import List, Tuple
@@ -14,6 +14,23 @@ from pathlib import Path
 from logging import getLogger
 
 logger = getLogger(__name__)
+
+
+def start_indexing(
+    task_queue: TaskQueue,
+    user: User,
+    repo_dst: str,
+    index_persist_dir: str,
+    save_graph_path: str,
+) -> InitIndexGraphTask:
+    task = InitIndexGraphTask(
+        task_args={
+            "repo_dst": repo_dst,
+            "index_persist_dir": index_persist_dir,
+            "save_graph_path": save_graph_path,
+        }
+    )
+    enqueue_task_and_wait(task_queue=task_queue, user_id=user.id, task=task)
 
 
 def get_repo(*, db_session, curr_user: User, owner: str, repo_name: str) -> Repo:
@@ -81,11 +98,7 @@ def get_repo_contents(*, db_session, curr_user: User, repo_name: str) -> Repo:
 
 
 async def create_or_find(
-    *,
-    db_session,
-    curr_user: User,
-    repo_in: RepoCreate,
-    task_queue: TaskQueue,
+    *, db_session, curr_user: User, repo_in: RepoCreate, task_queue: TaskQueue
 ) -> Repo:
     """Creates a new repo or returns an existing repo if we already have it downloaded"""
 
@@ -112,16 +125,18 @@ async def create_or_find(
 
         git_repo = GitRepo.clone_repo(repo_dst, repo_in.url)
 
-        # TODO: probably should wrap this in a task
-        # TODO: add some error logging altho I think we should defer
-        # this to until when we have logging and shit setup
-        code_index = get_or_create_index(
-            str(repo_dst),
-            {},
-            persist_dir=str(index_persist_dir),
+        # TODO: add error logging
+        task = InitIndexGraphTask(
+            task_args={
+                "repo_dst": repo_dst,
+                "index_persist_dir": index_persist_dir,
+                "save_graph_path": save_graph_path,
+            }
         )
-        create_chunk_graph(code_index, repo_dst, save_graph_path)
+        enqueue_task_and_wait(task_queue=task_queue, user_id=curr_user.id, task=task)
 
+        # TODO: should maybe turn this into task as well
+        # would need asyncSession to perform db_updates though
         lang, sz = git_repo.get_lang_and_size()
         repo = Repo(
             **repo_in.dict(),

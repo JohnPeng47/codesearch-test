@@ -1,45 +1,10 @@
-from cowboy_lib.api.runner.shared import Task, TaskStatus
+from .models import Task, TaskStatus
 
 from fastapi import Request
 from threading import Lock
 from collections import defaultdict
-from typing import List, Dict
-from asyncio import Event, wait_for
-
-
-class TaskEvent:
-    def __init__(self, task: Task):
-        self.event = Event()
-        self.task = task
-        self.result = None
-
-    async def wait(self, timeout: float = None):
-        try:
-            if timeout:
-                await wait_for(self.event.wait(), timeout)
-            else:
-                await self.event.wait()
-        except TimeoutError:
-            return None
-
-        return self.result
-
-    def complete(self, result):
-        """
-        Complete with result and signal event to wake up
-        """
-        self.result = result
-        self.event.set()
-
-    @property
-    def task_id(self):
-        return self.task.task_id
-
-    def __eq__(self, other):
-        return self.task_id == other.task_id
-
-    # def __hash__(self):
-    #     return sum([ord(c) for c in self.task_id])
+from typing import List, Dict, Callable
+from concurrent.futures import ThreadPoolExecutor
 
 
 class TaskQueue:
@@ -60,8 +25,11 @@ class TaskQueue:
     def __init__(self):
         if not self._initialized:
             # Initialize instance variables only once
-            self.queue: Dict[str, List[TaskEvent]] = defaultdict(list)
+            self.queue: Dict[str, List[Task]] = defaultdict(list)
             self.locks = defaultdict(list)
+            self.executor = ThreadPoolExecutor(
+                max_workers=5
+            )  # Adjust max_workers as needed
             self._initialized = True  # Mark as initialized
 
     def _acquire_lock(self, user_id: int):
@@ -69,54 +37,50 @@ class TaskQueue:
             self.locks[user_id] = Lock()
         return self.locks.get(user_id)
 
-    def put(self, user_id: int, task: str) -> TaskEvent:
+    def put(self, user_id: int, task: Task):
         with self._acquire_lock(user_id):
-            t = TaskEvent(task)
-            self.queue[user_id].append(t)
+            self.queue[user_id].append(task)
+            self.executor.submit(
+                self._execute_and_complete,
+                task.task,
+                user_id,
+                task.task_id,
+                task.task_args,
+            )
 
-            return t
+    def _execute_and_complete(
+        self, task: Callable, user_id: int, task_id: str, task_args: Dict
+    ):
+        print(f"Executing task {task_id} for with {task_args}")
+        res = task(**task_args)
 
-    def complete(self, user_id: int, task_id: str, res):
         with self._acquire_lock(user_id):
             for i in range(len(self.queue[user_id])):
                 if self.queue[user_id][i].task_id == task_id:
                     t = self.queue[user_id].pop(i)
-                    t.complete(res)
-                    break
-
-    # def get(self, user_id: int) -> Task:
-    #     """
-    #     Returns the first PENDING task and changes its status to STARTED
-    #     """
-    #     with self._acquire_lock(user_id):
-    #         if len(self.queue[user_id]) == 0:
-    #             return None
-
-    #         return self.queue[user_id].pop()
+                    t.result = res
 
     def get_all(self, user_id: int) -> List[Task]:
-        with self._acquire_lock(user_id):
-            if len(self.queue[user_id]) == 0:
-                return []
+        if len(self.queue[user_id]) == 0:
+            return []
 
-            tasks = []
-            for t in filter(
-                lambda t: t.task.status == TaskStatus.PENDING.value, self.queue[user_id]
-            ):
-                t.task.status = TaskStatus.STARTED.value
-                tasks.append(t.task)
+        tasks = []
+        for t in filter(
+            lambda t: t.status == TaskStatus.PENDING.value, self.queue[user_id]
+        ):
+            t.status = TaskStatus.STARTED.value
+            tasks.append(t.task)
 
-            return tasks
+        return tasks
 
     def peak(self, user_id: int, n: int) -> List[Task]:
         """
         Get the first n tasks in queue without removing
         """
-        with self._acquire_lock(user_id):
-            if len(self.queue[user_id]) == 0:
-                return []
+        if len(self.queue[user_id]) == 0:
+            return []
 
-            return [t.task for t in self.queue[user_id][:n]]
+        return [t.task for t in self.queue[user_id][:n]]
 
 
 def get_queue(request: Request):

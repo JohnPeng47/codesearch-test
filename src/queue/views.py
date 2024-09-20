@@ -1,6 +1,6 @@
 from cowboy_lib.api.runner.shared import Task
 
-from .service import list_tasks, dequeue_task, complete_task
+from .service import list_tasks, dequeue_task
 from .models import CompleteTaskRequest
 from .core import TaskQueue, get_queue, get_token_registry, get_token
 
@@ -61,19 +61,3 @@ def get(
         task_queue=task_queue, user_id=curr_user.id if curr_user else int(user_token)
     )
     return tasks
-
-
-@task_queue_router.post("/task/complete", response_model=CompleteTaskRequest)
-def complete(
-    task: CompleteTaskRequest,
-    task_queue: TaskQueue = Depends(get_queue),
-    curr_user: User = Depends(get_current_user),
-):
-
-    task_queue = complete_task(
-        task_queue=task_queue,
-        user_id=curr_user.id,
-        task_id=task.task_id,
-        result=task.result,
-    )
-    return task

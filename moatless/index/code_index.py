@@ -1113,7 +1113,6 @@ class CodeIndex:
                 else "implementation"
             )
 
-            print("FILEPAHTl ", file_path)
             return {
                 "file_path": file_path,
                 "file_name": os.path.basename(file_path),
