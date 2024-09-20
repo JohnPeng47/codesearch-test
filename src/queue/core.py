@@ -37,28 +37,38 @@ class TaskQueue:
             self.locks[user_id] = Lock()
         return self.locks.get(user_id)
 
+    def get(self, task_id: str) -> Task:
+        for user_queue in self.queue.values():
+            task = next((t for t in user_queue if t.task_id == task_id), None)
+            if task:
+                return task
+        return None
+
     def put(self, user_id: int, task: Task):
         with self._acquire_lock(user_id):
-            self.queue[user_id].append(task)
-            self.executor.submit(
-                self._execute_and_complete,
-                task.task,
-                user_id,
-                task.task_id,
-                task.task_args,
-            )
+            if task.status != TaskStatus.PENDING.value:
+                raise ValueError("Task must be in PENDING state to be added to queue")
 
-    def _execute_and_complete(
-        self, task: Callable, user_id: int, task_id: str, task_args: Dict
-    ):
-        print(f"Executing task {task_id} for with {task_args}")
-        res = task(**task_args)
+            self.queue[user_id].append(task)
+            self.executor.submit(self._execute_and_complete, task, user_id)
+
+    def _execute_and_complete(self, task: Task, user_id: int):
+        with self._acquire_lock(user_id):
+            task.status = TaskStatus.STARTED.value
+
+        try:
+            print("Started task: ", task.task_id)
+            task.result = task.task(**task.task_args)
+            task.status = TaskStatus.COMPLETE.value
+        except Exception as e:
+            print("Task failed with : ", e)
+            task.result = str(e)
+            task.status = TaskStatus.FAILED.value
 
         with self._acquire_lock(user_id):
             for i in range(len(self.queue[user_id])):
-                if self.queue[user_id][i].task_id == task_id:
-                    t = self.queue[user_id].pop(i)
-                    t.result = res
+                if self.queue[user_id][i].task_id == task.task_id:
+                    self.queue[user_id].pop(i)
 
     def get_all(self, user_id: int) -> List[Task]:
         if len(self.queue[user_id]) == 0:

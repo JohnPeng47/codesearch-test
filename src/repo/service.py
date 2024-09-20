@@ -1,6 +1,7 @@
 from src.auth.models import User
 from src.queue.core import TaskQueue
-from src.queue.service import enqueue_task_and_wait
+from src.queue.models import Task
+from src.queue.service import enqueue_task
 
 from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT
 
@@ -14,23 +15,6 @@ from pathlib import Path
 from logging import getLogger
 
 logger = getLogger(__name__)
-
-
-def start_indexing(
-    task_queue: TaskQueue,
-    user: User,
-    repo_dst: str,
-    index_persist_dir: str,
-    save_graph_path: str,
-) -> InitIndexGraphTask:
-    task = InitIndexGraphTask(
-        task_args={
-            "repo_dst": repo_dst,
-            "index_persist_dir": index_persist_dir,
-            "save_graph_path": save_graph_path,
-        }
-    )
-    enqueue_task_and_wait(task_queue=task_queue, user_id=user.id, task=task)
 
 
 def get_repo(*, db_session, curr_user: User, owner: str, repo_name: str) -> Repo:
@@ -97,9 +81,9 @@ def get_repo_contents(*, db_session, curr_user: User, repo_name: str) -> Repo:
     return GitRepo(repo.file_path).to_json()
 
 
-def create_or_find(
+async def create_or_find(
     *, db_session, curr_user: User, repo_in: RepoCreate, task_queue: TaskQueue
-) -> str:
+) -> Task:
     """Creates a new repo or returns an existing repo if we already have it downloaded"""
 
     existing_repo = get_repo(
@@ -133,7 +117,7 @@ def create_or_find(
                 "save_graph_path": save_graph_path,
             }
         )
-        enqueue_task_and_wait(task_queue=task_queue, user_id=curr_user.id, task=task)
+        enqueue_task(task_queue=task_queue, user_id=curr_user.id, task=task)
 
         # TODO: should maybe turn this into task as well
         # would need asyncSession to perform db_updates though
@@ -151,7 +135,7 @@ def create_or_find(
         db_session.add(repo)
         db_session.commit()
 
-        return task.task_id
+        return task
 
     except PrivateRepoError as e:
         raise PrivateRepoAccess

@@ -136,7 +136,6 @@ class RepoGraph(CodeGraph):
         """
         Returns the export (def) scopes that are tied to the import (ref) scope
         """
-
         possible_exports = [
             self.get_node(v)
             for _, v, attrs in self._graph.edges(ref_node_id, data=True)

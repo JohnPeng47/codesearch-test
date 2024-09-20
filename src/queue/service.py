@@ -11,12 +11,10 @@ def list_tasks(*, task_queue: TaskQueue, user_id: int, n: int) -> Optional[List[
     return task_queue.peak(user_id, n)
 
 
-def dequeue_task(*, task_queue: TaskQueue, user_id: int) -> Optional[List[Task]]:
-    """Dequeue the first task in the queue: retrieve and delete it."""
-
-    return task_queue.get_all(user_id)
-
-
-def enqueue_task_and_wait(*, task_queue: TaskQueue, task: Task, user_id: int):
+def enqueue_task(*, task_queue: TaskQueue, task: Task, user_id: int):
     """Enqueue a task to the specified queue and wait for its completion."""
     task_queue.put(user_id, task)
+
+
+async def get_task(*, task_queue: TaskQueue, task_id: str) -> Optional[Task]:
+    return task_queue.get(task_id)

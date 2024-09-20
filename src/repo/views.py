@@ -33,21 +33,24 @@ def http_to_ssh(url):
 
 
 @repo_router.post("/repo/create", response_model=TaskResponse)
-def create_repo(
+async def create_repo(
     repo_in: RepoCreate,
     db_session: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     task_queue: TaskQueue = Depends(get_queue),
 ):
     try:
-        task_id = create_or_find(
+        task = await create_or_find(
             db_session=db_session,
             repo_in=repo_in,
             curr_user=current_user,
             task_queue=task_queue,
         )
+
         # need as_dict to convert cloned_folders to list
-        return TaskResponse(task_id=task_id)
+        return TaskResponse(
+            task_id=task.task_id, status=task.status, result=task.result
+        )
     except PrivateRepoAccess as e:
         raise ClientActionException(message="Private repo not yet supported", ex=e)
 
