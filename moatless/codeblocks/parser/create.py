@@ -1,7 +1,7 @@
 from typing import Optional
 
-from codesearch.moatless.codeblocks.parser.parser import CodeParser
-from codesearch.moatless.codeblocks.parser.python import PythonParser
+from moatless.codeblocks.parser.parser import CodeParser
+from moatless.codeblocks.parser.python import PythonParser
 
 
 def is_supported(language: str) -> bool:

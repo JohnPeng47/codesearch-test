@@ -5,8 +5,8 @@ from typing import List, Optional, Set
 from pydantic import BaseModel, validator, Field, root_validator
 from typing_extensions import deprecated
 
-from codesearch.moatless.codeblocks.parser.comment import get_comment_symbol
-from codesearch.moatless.utils.colors import Colors
+from moatless.codeblocks.parser.comment import get_comment_symbol
+from moatless.utils.colors import Colors
 
 BlockPath = List[str]
 

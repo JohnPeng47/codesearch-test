@@ -1097,15 +1097,10 @@ class CodeIndex:
         input_files: Optional[list[str]] = None,
         num_workers: Optional[int] = None,
     ):
-
         repo_path = repo_path or self._file_repo.path
 
         # Only extract file name and type to not trigger unnecessary embedding jobs
         def file_metadata_func(file_path: str) -> Dict:
-            file_path = file_path.replace(repo_path, "")
-            if file_path.startswith("/"):
-                file_path = file_path[1:]
-
             test_patterns = [
                 "**/test/**",
                 "**/tests/**",
@@ -1118,6 +1113,7 @@ class CodeIndex:
                 else "implementation"
             )
 
+            print("FILEPAHTl ", file_path)
             return {
                 "file_path": file_path,
                 "file_name": os.path.basename(file_path),

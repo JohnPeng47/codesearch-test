@@ -3,14 +3,14 @@ import logging
 import tree_sitter_python as tspython
 from tree_sitter import Language
 
-from codesearch.moatless.codeblocks.codeblocks import (
+from moatless.codeblocks.codeblocks import (
     CodeBlockType,
     CodeBlock,
     ReferenceScope,
     RelationshipType,
     ValidationError,
 )
-from codesearch.moatless.codeblocks.parser.parser import (
+from moatless.codeblocks.parser.parser import (
     CodeParser,
     commented_out_keywords,
     NodeMatch,

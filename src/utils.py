@@ -9,6 +9,7 @@ from contextlib import contextmanager
 
 from src.logger import testgen_logger
 
+
 @contextmanager
 def set_temp_env_var(key, value):
     old_value = os.environ.get(key)

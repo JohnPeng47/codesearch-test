@@ -2,9 +2,9 @@ import logging
 import re
 import time
 
-from codesearch.moatless.codeblocks.module import Module
-from codesearch.moatless.repository import FileRepository
-from codesearch.moatless.types import FileWithSpans
+from moatless.codeblocks.module import Module
+from moatless.repository import FileRepository
+from moatless.types import FileWithSpans
 
 logger = logging.getLogger(__name__)
 

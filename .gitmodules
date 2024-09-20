@@ -3,7 +3,12 @@
 	url = git@github.com:JohnPeng47/cowboy-lib.git
     branch = main
 
-[submodule "codesearch"]
-	path = codesearch
-	url = git@github.com:JohnPeng47/codesearch.git
+[submodule "moatless"]
+	path = moatless
+	url = git@github.com:JohnPeng47/moatless-tools.git
+    branch = main
+
+[submodule "rtfs"]
+	path = moatless
+	url = git@github.com:JohnPeng47/moatless-tools.git
     branch = main

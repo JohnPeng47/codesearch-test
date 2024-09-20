@@ -2,9 +2,9 @@ import json
 
 import pandas as pd
 
-from codesearch.moatless.benchmark.swebench import setup_swebench_repo, sorted_instances
-from codesearch.moatless.benchmark.utils import get_file_spans_from_patch
-from codesearch.moatless.repository import FileRepository
+from moatless.benchmark.swebench import setup_swebench_repo, sorted_instances
+from moatless.benchmark.utils import get_file_spans_from_patch
+from moatless.repository import FileRepository
 
 experiments_runs = [
     "20240402_sweagent_claude3opus",

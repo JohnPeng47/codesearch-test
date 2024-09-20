@@ -12,7 +12,6 @@ import random
 from typing import List, Union, Tuple, Dict
 from pydantic import BaseModel
 import dotenv
-import re
 
 from src.repo.extensions import EXTENSIONS
 
@@ -31,7 +30,6 @@ class NoMainBranch(Exception):
 
 class PrivateRepoError(Exception):
     pass
-
 
 
 def del_file(func, path, exc_info):

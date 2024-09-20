@@ -12,17 +12,18 @@ from src.auth.service import get_current_user
 from src.auth.models import User
 from src.repo.service import get_no_auth
 from src.config import REPOS_ROOT, INDEX_ROOT
-from codesearch.moatless import FileRepository
-from codesearch.moatless.workspace import Workspace
+from moatless import FileRepository
+from moatless.workspace import Workspace
 from src.index import get_or_create_index
 
 search_router = APIRouter()
+
 
 @search_router.post("/search", response_model=SearchResponse)
 async def search(
     request: SearchRequest,
     db_session: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     # Validate that the repo exists
     repo = get_no_auth(db_session=db_session, repo_name=request.repo_name)
@@ -59,8 +60,8 @@ async def search(
     #     # cluster_results=format_results(cluster_results)
     # )
 
-
     return JSONResponse(content={"answer": a})
+
 
 # Don't forget to include this router in your main FastAPI app
 # app.include_router(search_router)

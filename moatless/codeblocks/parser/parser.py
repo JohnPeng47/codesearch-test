@@ -8,7 +8,7 @@ import networkx as nx
 from llama_index.core import get_tokenizer
 from tree_sitter import Node, Language, Parser
 
-from codesearch.moatless.codeblocks.codeblocks import (
+from moatless.codeblocks.codeblocks import (
     CodeBlock,
     CodeBlockType,
     Relationship,
@@ -19,8 +19,8 @@ from codesearch.moatless.codeblocks.codeblocks import (
     CodeBlockTypeGroup,
     SpanType,
 )
-from codesearch.moatless.codeblocks.module import Module
-from codesearch.moatless.codeblocks.parser.comment import get_comment_symbol
+from moatless.codeblocks.module import Module
+from moatless.codeblocks.parser.comment import get_comment_symbol
 
 commented_out_keywords = ["rest of the code", "existing code", "other code"]
 child_block_types = ["ERROR", "block"]

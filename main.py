@@ -25,7 +25,8 @@ from logging import getLogger
 from src.queue.core import TaskQueue
 from src.auth.views import auth_router
 from src.repo.views import repo_router
-from src.search.views import search_router
+
+# from src.search.views import search_router
 from src.queue.views import task_queue_router
 from src.health.views import health_router
 from src.exceptions import ClientActionException
@@ -38,7 +39,7 @@ import uuid
 
 log = getLogger(__name__)
 
-init_sentry()
+# init_sentry()
 
 
 # def disable_uvicorn_logging():
@@ -238,9 +239,8 @@ app.add_middleware(AddTaskQueueMiddleware)
 app.include_router(auth_router)
 app.include_router(repo_router)
 app.include_router(task_queue_router)
-app.include_router(search_router)
+# app.include_router(search_router)
 app.include_router(health_router)
-
 # logfire.configure(console=False)
 # logfire.instrument_fastapi(app, excluded_urls=["/task/get"])
 
@@ -258,6 +258,6 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=PORT,
         reload=True,
-        reload_excludes=["./repos"],
+        reload_excludes=["./data"],
         # log_config=config,
     )

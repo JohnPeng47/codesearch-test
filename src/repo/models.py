@@ -10,6 +10,10 @@ import re
 from typing import List, Optional
 
 
+def repo_ident(owner: str, repo_name: str):
+    return f"{owner}_{repo_name}"
+
+
 class Repo(Base):
     """
     Stores configuration for a repository
@@ -23,17 +27,30 @@ class Repo(Base):
     url = Column(String)
     language = Column(String)
     repo_size = Column(Integer)
+
+    # Paths
     file_path = Column(String)
+    graph_path = Column(String)
+    summary_path = Column(String)
+    index_path = Column(String)
+
     # TODO: probably want to make this a separate RepoStats table
     views = Column(Integer)
 
-    users = relationship("User", secondary=user_repo, uselist=True, cascade="all, delete-orphan", back_populates="repos", single_parent=True)
+    users = relationship(
+        "User",
+        secondary=user_repo,
+        uselist=True,
+        back_populates="repos",
+        single_parent=True,
+    )
 
     def to_dict(self):
         return {
             # "repo_name": self.repo_name,
             "url": self.url,
         }
+
 
 class RepoBase(RTFSBase):
     url: str
@@ -42,8 +59,10 @@ class RepoBase(RTFSBase):
 class RepoGet(RepoBase):
     pass
 
+
 class RepoBase(BaseModel):
     pass
+
 
 class RepoCreate(BaseModel):
     url: str
@@ -83,9 +102,21 @@ class RepoCreate(BaseModel):
                 raise ValueError("Could not extract owner and repo_name from URL")
 
         return self
-    
+
+
+class RepoGetRequest(BaseModel):
+    owner: str
+    repo_name: str
+
+
+class RepoDeleteRequest(BaseModel):
+    owner: str
+    repo_name: str
+
+
 class RepoResponse(RepoBase):
     name: str
+
 
 class RepoListResponse(RTFSBase):
     user_repos: List[RepoResponse]

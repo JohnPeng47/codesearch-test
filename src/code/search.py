@@ -1,9 +1,9 @@
-from codesearch.moatless.index import CodeIndex, IndexSettings
-from codesearch.moatless import FileRepository
-from codesearch.moatless.workspace import Workspace
-from codesearch.moatless.index.simple_faiss import VectorStoreType
-from codesearch.moatless.codeblocks.module import Module
-from codesearch.moatless.file_context import FileContext
+from moatless.index import CodeIndex, IndexSettings
+from moatless import FileRepository
+from moatless.workspace import Workspace
+from moatless.index.simple_faiss import VectorStoreType
+from moatless.codeblocks.module import Module
+from moatless.file_context import FileContext
 from codesearch.models import OpenAIModel
 
 from pathlib import Path
@@ -71,6 +71,7 @@ def read_cluster_file(cluster_file):
         data = json.load(file)
     return data
 
+
 def search_code(query: str, code_index: CodeIndex, workspace: Workspace) -> FileContext:
     code_results = code_index.search(query, store_type=VectorStoreType.CODE)
     file_context = workspace.create_file_context(files_with_spans=code_results.hits)
@@ -106,6 +107,7 @@ def search_cluster(query: str, code_index: CodeIndex, workspace: Workspace):
     #     print(f, [span.span_id for span in v.spans])
 
     return file_context.get_contexts().items()
+
 
 def search(code_index: CodeIndex, repo_dir):
     file_repo = FileRepository(repo_path=repo_dir)
@@ -149,6 +151,7 @@ def search(code_index: CodeIndex, repo_dir):
         print(
             "---------------------------------------------------------------------------------"
         )
+
 
 if __name__ == "__main__":
     search()

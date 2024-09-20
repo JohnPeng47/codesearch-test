@@ -1,9 +1,9 @@
-from codesearch.moatless.index import CodeIndex, IndexSettings
-from codesearch.moatless import FileRepository
-from codesearch.moatless.workspace import Workspace
-from codesearch.moatless.index.simple_faiss import VectorStoreType
-from codesearch.moatless.codeblocks.module import Module
-from codesearch.moatless.file_context import FileContext
+from moatless.index import CodeIndex, IndexSettings
+from moatless import FileRepository
+from moatless.workspace import Workspace
+from moatless.index.simple_faiss import VectorStoreType
+from moatless.codeblocks.module import Module
+from moatless.file_context import FileContext
 
 from src.oai import OpenAIModel
 from src.config import REPOS_ROOT, INDEX_ROOT, SUMMARIES_ROOT
@@ -175,6 +175,7 @@ def search(query, code_index, workspace):
         print(
             "---------------------------------------------------------------------------------"
         )
+
 
 if __name__ == "__main__":
     search()

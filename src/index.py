@@ -1,9 +1,9 @@
 import os
 from typing import Dict
 
-from codesearch.moatless.index import CodeIndex
-from codesearch.moatless.index.settings import IndexSettings
-from codesearch.moatless import FileRepository
+from moatless.index import CodeIndex
+from moatless.index.settings import IndexSettings
+from moatless import FileRepository
 from llama_index.core.storage.docstore import SimpleDocumentStore
 
 from rtfs.chunk_resolution.chunk_graph import ChunkGraph
@@ -11,13 +11,10 @@ from rtfs.chunk_resolution.summarize import Summarizer
 from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT
 
 
-def get_or_create_index(repo_name: str, cluster_json: Dict):
+def get_or_create_index(repo_path: str, cluster_json: Dict, persist_dir: str = None):
     """
     Gets or creates the code embeddings/docstore for the repo
     """
-    repo_path = os.path.join(REPOS_ROOT, repo_name)
-    persist_dir = os.path.join(INDEX_ROOT, repo_name)
-
     file_repo = FileRepository(repo_path)
     index_settings = IndexSettings(embed_model="text-embedding-3-small")
 
@@ -59,12 +56,13 @@ def create_chunk_graph(repo_name: str, summarize: bool = False):
     cg = ChunkGraph.from_chunks(repo_path, nodes)
 
     cg.cluster()
-    
+
     if summarize:
         summarizer = Summarizer()
         summarizer.summarize(cg, user_confirm=False)
-        
+
     cg.to_json(save_path)
+
 
 # chunks = create_chunk_graph(
 #     Path("tests/repos/index/moatless-tools"),

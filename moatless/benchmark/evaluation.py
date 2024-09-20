@@ -14,8 +14,8 @@ import litellm
 import pandas as pd
 from tqdm.auto import tqdm
 
-from codesearch.moatless import Workspace, FileRepository
-from codesearch.moatless.benchmark.swebench import (
+from moatless import Workspace, FileRepository
+from moatless.benchmark.swebench import (
     setup_swebench_repo,
     get_repo_dir_name,
     found_in_expected_spans,
@@ -23,12 +23,12 @@ from codesearch.moatless.benchmark.swebench import (
     sorted_instances,
     load_instance,
 )
-from codesearch.moatless.benchmark.utils import (
+from moatless.benchmark.utils import (
     trace_metadata,
     get_missing_files,
 )
-from codesearch.moatless.file_context import FileContext
-from codesearch.moatless.loop import Transitions, AgenticLoop
+from moatless.file_context import FileContext
+from moatless.loop import Transitions, AgenticLoop
 
 logger = logging.getLogger("Evaluator")
 

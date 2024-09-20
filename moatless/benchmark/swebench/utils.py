@@ -3,15 +3,15 @@ import os
 
 from datasets import load_dataset
 
-from codesearch.moatless.benchmark.utils import (
+from moatless.benchmark.utils import (
     get_missing_spans,
     file_spans_to_dict,
     get_missing_files,
 )
-from codesearch.moatless.file_context import FileContext
-from codesearch.moatless.repository import FileRepository
-from codesearch.moatless.utils.repo import setup_github_repo
-from codesearch.moatless.workspace import Workspace
+from moatless.file_context import FileContext
+from moatless.repository import FileRepository
+from moatless.utils.repo import setup_github_repo
+from moatless.workspace import Workspace
 
 
 def load_instances(
