@@ -97,9 +97,9 @@ def get_repo_contents(*, db_session, curr_user: User, repo_name: str) -> Repo:
     return GitRepo(repo.file_path).to_json()
 
 
-async def create_or_find(
+def create_or_find(
     *, db_session, curr_user: User, repo_in: RepoCreate, task_queue: TaskQueue
-) -> Repo:
+) -> str:
     """Creates a new repo or returns an existing repo if we already have it downloaded"""
 
     existing_repo = get_repo(
@@ -151,7 +151,7 @@ async def create_or_find(
         db_session.add(repo)
         db_session.commit()
 
-        return repo
+        return task.task_id
 
     except PrivateRepoError as e:
         raise PrivateRepoAccess

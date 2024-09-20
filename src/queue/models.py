@@ -55,6 +55,10 @@ class Task(BaseModel):
         raise NotImplementedError()
 
 
+class TaskResponse(BaseModel):
+    task_id: str
+
+
 class CompleteTaskRequest(Task):
     pass
 
