@@ -109,13 +109,17 @@ class RepoGetRequest(BaseModel):
     repo_name: str
 
 
-class RepoDeleteRequest(BaseModel):
-    owner: str
-    repo_name: str
+class RepoDeleteRequest(RepoGetRequest):
+    pass
+
+
+class RepoSummarizeRequest(RepoGetRequest):
+    pass
 
 
 class RepoResponse(RepoBase):
-    name: str
+    owner: str
+    repo_name: str
 
 
 class RepoListResponse(RTFSBase):

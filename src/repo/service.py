@@ -1,13 +1,7 @@
 from src.auth.models import User
-from src.queue.core import TaskQueue
-from src.queue.models import Task
-from src.queue.service import enqueue_task
 
-from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT
-
-from .repository import GitRepo, PrivateRepoError
-from .models import Repo, RepoCreate, PrivateRepoAccess, repo_ident
-from .tasks import InitIndexGraphTask
+from .repository import GitRepo
+from .models import Repo
 
 import shutil
 from typing import List, Tuple
@@ -79,72 +73,3 @@ def get_repo_contents(*, db_session, curr_user: User, repo_name: str) -> Repo:
     """
     repo = get_repo(db_session=db_session, curr_user=curr_user, repo_name=repo_name)
     return GitRepo(repo.file_path).to_json()
-
-
-async def create_or_find(
-    *, db_session, curr_user: User, repo_in: RepoCreate, task_queue: TaskQueue
-) -> Task:
-    """Creates a new repo or returns an existing repo if we already have it downloaded"""
-
-    existing_repo = get_repo(
-        db_session=db_session,
-        curr_user=curr_user,
-        owner=repo_in.owner,
-        repo_name=repo_in.repo_name,
-    )
-    if existing_repo:
-        if curr_user not in existing_repo.users:
-            # add mapping between user and existing repo
-            existing_repo.users.append(curr_user)
-            db_session.add(existing_repo)
-            db_session.commit()
-
-        return existing_repo
-
-    repo_dst = None
-    try:
-        index_persist_dir = INDEX_ROOT / repo_ident(repo_in.owner, repo_in.repo_name)
-        repo_dst = REPOS_ROOT / repo_ident(repo_in.owner, repo_in.repo_name)
-        save_graph_path = GRAPH_ROOT / repo_ident(repo_in.owner, repo_in.repo_name)
-
-        git_repo = GitRepo.clone_repo(repo_dst, repo_in.url)
-
-        # TODO: add error logging
-        task = InitIndexGraphTask(
-            task_args={
-                "repo_dst": repo_dst,
-                "index_persist_dir": index_persist_dir,
-                "save_graph_path": save_graph_path,
-            }
-        )
-        enqueue_task(task_queue=task_queue, user_id=curr_user.id, task=task)
-
-        # TODO: should maybe turn this into task as well
-        # would need asyncSession to perform db_updates though
-        lang, sz = git_repo.get_lang_and_size()
-        repo = Repo(
-            **repo_in.dict(),
-            language=lang,
-            repo_size=sz,
-            file_path=str(repo_dst),
-            index_path=str(index_persist_dir),
-            graph_path=str(save_graph_path),
-            users=[curr_user],
-        )
-
-        db_session.add(repo)
-        db_session.commit()
-
-        return task
-
-    except PrivateRepoError as e:
-        raise PrivateRepoAccess
-
-    # TODO: think
-    except Exception as e:
-        db_session.rollback()
-
-        GitRepo.delete_repo(repo_dst)
-        logger.error(f"Failed to create repo configuration: {e}")
-
-        raise e

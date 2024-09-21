@@ -18,6 +18,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 import uvicorn
 from logging import getLogger
+import multiprocessing
 
 # from src.logger import configure_uvicorn_logger
 # from src.auth.service import get_current_user
@@ -245,6 +246,19 @@ app.include_router(health_router)
 # logfire.instrument_fastapi(app, excluded_urls=["/task/get"])
 
 
+def calculate_workers(num_threads_per_core=2):
+    """
+    Calculate the number of workers based on the formula:
+    number_of_workers = number_of_cores x num_of_threads_per_core + 1
+
+    :param num_threads_per_core: Number of threads per core (default is 2)
+    :return: Calculated number of workers
+    """
+    num_cores = multiprocessing.cpu_count()
+    number_of_workers = (num_cores * num_threads_per_core) + 1
+    return number_of_workers
+
+
 if __name__ == "__main__":
     # start the repo sync thread
     # Session = sessionmaker(bind=engine)
@@ -257,8 +271,9 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=PORT,
-        workers=2,
-        # reload=True,
-        # reload_excludes=["./data"],
+        # workers=2,
+        # workers=calculate_workers(),
+        reload=True,
+        reload_excludes=["./data"],
         # log_config=config,
     )

@@ -1,6 +1,7 @@
 from src.queue.models import Task, TaskType
 from src.index.service import get_or_create_index
-from src.graph.service import create_chunk_graph
+
+from .graph import create_chunk_graph
 
 
 class InitIndexGraphTask(Task):
