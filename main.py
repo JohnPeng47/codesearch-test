@@ -40,14 +40,17 @@ import uuid
 
 log = getLogger(__name__)
 
-# init_sentry()
+STATIC_DIR = "build"
 
+app.mount(
+    "/static", StaticFiles(directory=os.path.join(STATIC_DIR, "static")))
 
-# def disable_uvicorn_logging():
-#     uvicorn_error = logging.getLogger("uvicorn.error")
-#     uvicorn_error.disabled = True
-#     uvicorn_access = logging.getLogger("uvicorn.access")
-#     uvicorn_access.disabled = True
+@app.get("/")
+def read_root():
+    with open(os.path.join(STATIC_DIR, "index.html"), 'r') as f:
+        content = f.read()
+        return HTMLResponse(content=content)
+
 
 
 async def not_found(request, exc):
@@ -69,6 +72,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+
 
 # def get_path_params_from_request(request: Request) -> str:
 #     path_params = {}
