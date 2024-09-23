@@ -14,6 +14,9 @@ class Node(DictMixin):
     kind: str
     id: str = field(default=str(uuid.uuid4()))
 
+    def get_content(self):
+        raise NotImplementedError(f"Method not implemented on {self.__name__}")
+
 
 @dataclass
 class Edge(DictMixin):
@@ -35,6 +38,7 @@ class CodeGraph(DiGraph):
         return node.id
 
     def add_edge(self, edge: Edge):
+        print("Adding edge1: ", edge.src, edge.dst)
         self._graph.add_edge(edge.src, edge.dst, **edge.dict())
 
     def get_node(self, node_id: str) -> Node:
@@ -49,3 +53,9 @@ class CodeGraph(DiGraph):
 
         node_class = self.node_types[node_kind]
         return node_class(id=node_id, **node_data)
+
+    def update_node(self, node: Node):
+        self._graph.nodes[node.id] = node.dict()
+
+    def children(self, node_id: str):
+        return self._graph.successors(node_id)

@@ -1,6 +1,6 @@
-from graph import CodeGraph
+# from graph import CodeGraph
 
 
-class Transform:
-    def __init__(self, graph: CodeGraph):
-        self._graph = graph
+# class Transform:
+#     def __init__(self, graph: CodeGraph):
+#         self._graph = graph

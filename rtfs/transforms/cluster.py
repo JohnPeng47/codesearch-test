@@ -1,8 +1,7 @@
-import networkx as nx
 from infomap import Infomap
+import networkx as nx
 from logging import getLogger
 from typing import List, Tuple, Dict
-import json
 
 from rtfs.chunk_resolution.graph import (
     ClusterNode,
@@ -10,9 +9,7 @@ from rtfs.chunk_resolution.graph import (
     ClusterEdge,
     ChunkNodeID,
 )
-
-from graph import CodeGraph
-from .cluster import cluster_infomap
+from rtfs.graph import CodeGraph
 
 logger = getLogger(__name__)
 
@@ -21,7 +18,7 @@ def cluster_infomap(digraph: nx.DiGraph) -> Dict[str, int]:
     # Initialize Infomap
     infomap = Infomap("--seed 42 --two-level", silent=True)
 
-    # Create a mapping from NetworkX node IDs to integer IDs
+    # Taking the first element of the tuple as the node id
     node_id_map = {node: idx for idx, node in enumerate(digraph.nodes())}
     reverse_node_id_map = {idx: node for node, idx in node_id_map.items()}
 
@@ -40,7 +37,6 @@ def cluster_infomap(digraph: nx.DiGraph) -> Dict[str, int]:
         cluster_dict[node_id] = levels[-1]
 
     # replace leaf nodes with their original id
-
     return cluster_dict
 
 

@@ -22,6 +22,7 @@ from .models import (
     repo_ident,
 )
 from .tasks import InitIndexGraphTask
+from .graph import summarize
 
 import re
 from fastapi import APIRouter, Depends, HTTPException
@@ -134,35 +135,24 @@ def get_user_and_recommended_repos(
     )
 
 
-# @repo_router.get("/repo/summarize/{}", response_model=RepoListResponse)
-# async def summarize_repo(
-#     request: RepoSummarizeRequest,
-#     db_session: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user),
-#     task_queue: TaskQueue = Depends(get_queue),
-# ):
-#     try:
-#         repo = get_repo(
-#             db_session=db_session,
-#             curr_user=current_user,
-#             owner=request.owner,
-#             repo_name=request.repo_name,
-#         )
-#         if not repo:
-#             raise HTTPException(status_code=404, detail="Repository not found")
+@repo_router.post("/repo/summarize", response_model=RepoListResponse)
+async def summarize_repo(
+    request: RepoSummarizeRequest,
+    db_session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    task_queue: TaskQueue = Depends(get_queue),
+):
+    repo = get_repo(
+        db_session=db_session,
+        curr_user=current_user,
+        owner=request.owner,
+        repo_name=request.repo_name,
+    )
+    if not repo:
+        raise HTTPException(status_code=404, detail="Repository not found")
 
-#         task = await task_queue.enqueue(
-#             TaskType.SUMMARIZE_REPO,
-#             repo_dst=repo.clone_path,
-#             index_persist_dir=repo.index_path,
-#             save_graph_path=repo.graph_path,
-#         )
-
-#         return TaskResponse(
-#             task_id=task.task_id, status=task.status, result=task.result
-#         )
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+    summarized = summarize(repo.file_path, repo.graph_path)
+    print(summarized)
 
 
 @repo_router.post("/repo/delete")

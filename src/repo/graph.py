@@ -1,4 +1,5 @@
-import os
+import json
+from pathlib import Path
 
 from moatless.index import CodeIndex
 from rtfs.chunk_resolution.chunk_graph import ChunkGraph
@@ -14,10 +15,14 @@ def create_chunk_graph(code_index: CodeIndex, repo_path: str, graph_path: str):
 
 
 def summarize(repo_path: str, graph_path: str):
-    cg = ChunkGraph.from_json(repo_path, graph_path)
+    with open(graph_path, "r") as f:
+        graph_dict = json.load(f)
 
-    cluster(cg)
+    cg = ChunkGraph.from_json(Path(repo_path), graph_dict)
+
+    cluster(cg.to_graph())
+
     summarizer = Summarizer(cg)
     summarizer.summarize()
 
-    print(cg.clusters_to_json())
+    return cg.clusters_to_json()

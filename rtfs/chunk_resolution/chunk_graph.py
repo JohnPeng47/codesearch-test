@@ -1,4 +1,4 @@
-from networkx import MultiDiGraph, node_link_graph, node_link_data
+from networkx import MultiDiGraph, node_link_graph, node_link_data, DiGraph
 from pathlib import Path
 from llama_index.core.schema import BaseNode
 from typing import List, Tuple, Dict
@@ -29,7 +29,6 @@ from .graph import (
     NodeKind,
     ChunkNodeID,
 )
-from .cluster import cluster_infomap
 
 import logging
 from collections import defaultdict
@@ -69,7 +68,7 @@ class ChunkGraph(CodeGraph):
         the list of scopes, and then using the scope -> scope mapping provided in RepoGraph
         to resolve the exports
         """
-        g = MultiDiGraph()
+        g = DiGraph()
         cg: ChunkGraph = cls(repo_path, g)
         cg._file2scope = defaultdict(set)
 
@@ -116,11 +115,8 @@ class ChunkGraph(CodeGraph):
     @classmethod
     def from_json(cls, repo_path: Path, json_data: Dict):
         cg = node_link_graph(json_data["link_data"])
-
-        for node_id, node_data in cg.nodes(data=True):
+        for _, node_data in cg.nodes(data=True):
             if "metadata" in node_data:
-                # does node_link_data just auto converts all data to string?
-                # not sure why this is converted to string ...
                 node_data["metadata"] = ChunkMetadata(**node_data["metadata"])
 
         return cls(
@@ -129,6 +125,9 @@ class ChunkGraph(CodeGraph):
             cluster_roots=json_data["cluster_roots"],
             cluster_depth=json_data["cluster_depth"],
         )
+
+    def to_graph(self):
+        return self._graph
 
     def to_json(self, file_path: Path):
         """
@@ -252,6 +251,7 @@ class ChunkGraph(CodeGraph):
 
                 # differentiate between ImportToExport chunks and CallToExport chunks
                 # so in the future we can use this for file level edges
+                print("Adding edge: ", chunk_node.id, dst_chunk.id)
                 ref_edge = ImportEdge(src=chunk_node.id, dst=dst_chunk.id, ref=ref.name)
                 # print(f"Adding edge: {chunk_node.id} -> {dst_chunk.id}")
                 self.add_edge(ref_edge)
