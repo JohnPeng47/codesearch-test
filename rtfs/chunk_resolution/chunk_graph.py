@@ -278,15 +278,15 @@ class ChunkGraph(CodeGraph):
                 return cluster_node
         return None
 
-    def children(self, node_id: str):
-        return [child for child, _ in self._graph.in_edges(node_id)]
+    # def children(self, node_id: str):
+    #     return [child for child, _ in self._graph.in_edges(node_id)]
 
-    # TODO: this only works for cluster nodes
-    def parent(self, node_id: str):
-        parents = [parent for _, parent in self._graph.out_edges(node_id)]
-        if parents:
-            return parents[0]
-        return None
+    # # TODO: this only works for cluster nodes
+    # def parent(self, node_id: str):
+    #     parents = [parent for _, parent in self._graph.out_edges(node_id)]
+    #     if parents:
+    #         return parents[0]
+    #     return None
 
     def get_clusters_at_depth(self, roots: List[ClusterNode], level):
         queue = deque([(root, 0) for root in roots])
@@ -316,7 +316,7 @@ class ChunkGraph(CodeGraph):
         roots = []
         for node in self._graph.nodes:
             if isinstance(self.get_node(node), ClusterNode):
-                if not self.parent(node):
+                if not self.parents(node)[0]:
                     roots.append(node)
 
         return roots
@@ -504,45 +504,6 @@ class ChunkGraph(CodeGraph):
                         cluster_node = self.get_node(child)
                         repr += f"  ClusterNode: {cluster_node.id}\n"
         return repr
-
-    def clusters_to_json(self):
-        def dfs_cluster(cluster_id, depth=0):
-            graph_json = {}
-
-            node_data = self._graph.nodes[cluster_id]
-
-            title = node_data.get("title", "<MISSING>")
-            key_variables = node_data.get("key_variables", [])[:4]
-            summary = node_data.get("summary", "MISSING")
-
-            graph_json["title"] = title
-            graph_json["key_variables"] = key_variables
-            graph_json["summary"] = summary
-            graph_json["chunks"] = []
-            graph_json["children"] = []
-
-            for child, _, edge_data in self._graph.in_edges(cluster_id, data=True):
-                if edge_data["kind"] == ClusterEdgeKind.ChunkToCluster:
-                    chunk_node = self.get_node(child)
-                    # TODO: change to include file name
-                    chunk_info = {
-                        "id": chunk_node.id,
-                        "og_id": chunk_node.og_id,
-                        "file_path": chunk_node.metadata.file_path.replace("\\", "/"),
-                    }
-                    graph_json["chunks"].append(chunk_info)
-
-                elif edge_data["kind"] == ClusterEdgeKind.ClusterToCluster:
-                    graph_json["children"].append(dfs_cluster(child, depth + 1))
-
-            return graph_json
-
-        graph_jsons = []
-        for node_id, node_data in self._graph.nodes(data=True):
-            if node_data["kind"] == "Cluster" and not self.parent(node_id):
-                graph_jsons.append(dfs_cluster(node_id))
-
-        return graph_jsons
 
     def clusters_to_str(self):
         INDENT_SYM = lambda d: "-" * d + " " if d > 0 else ""

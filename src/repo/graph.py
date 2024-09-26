@@ -20,9 +20,12 @@ def summarize(repo_path: str, graph_path: str):
 
     cg = ChunkGraph.from_json(Path(repo_path), graph_dict)
 
-    cluster(cg.to_graph())
+    cluster(cg)
 
     summarizer = Summarizer(cg)
     summarizer.summarize()
+    summarizer.gen_categories()
 
-    return cg.clusters_to_json()
+    # print("Clusters: ", json.dumps(summarizer.clusters_to_json(), indent=2))
+
+    return summarizer.to_json()

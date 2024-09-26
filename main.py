@@ -3,6 +3,7 @@ from contextvars import ContextVar
 import os
 
 from fastapi import FastAPI, status
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
@@ -40,17 +41,7 @@ import uuid
 
 log = getLogger(__name__)
 
-STATIC_DIR = "build"
-
-app.mount(
-    "/static", StaticFiles(directory=os.path.join(STATIC_DIR, "static")))
-
-@app.get("/")
-def read_root():
-    with open(os.path.join(STATIC_DIR, "index.html"), 'r') as f:
-        content = f.read()
-        return HTMLResponse(content=content)
-
+STATIC_DIR = "out"
 
 
 async def not_found(request, exc):
@@ -61,7 +52,6 @@ async def not_found(request, exc):
 
 
 exception_handlers = {404: not_found}
-
 
 app = FastAPI(exception_handlers=exception_handlers, openapi_url="/docs/openapi.json")
 
@@ -74,6 +64,14 @@ app.add_middleware(
 )
 
 
+app.mount("/static", StaticFiles(directory=os.path.join(STATIC_DIR, "static")))
+
+
+@app.get("/")
+def read_root():
+    with open(os.path.join(STATIC_DIR, "index.html"), "r") as f:
+        content = f.read()
+        return HTMLResponse(content=content)
 
 
 # def get_path_params_from_request(request: Request) -> str:

@@ -1,4 +1,4 @@
-from networkx import DiGraph, dfs_postorder_nodes
+from networkx import DiGraph
 from typing import Dict, Optional, Iterator, List, NewType, Tuple
 from enum import Enum
 from collections import defaultdict
