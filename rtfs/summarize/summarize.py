@@ -121,8 +121,6 @@ class Summarizer:
                         print("Childnode not found: ", child)
                         continue
 
-                    print("Adding edge: ", child_node.id, cluster_node.id)
-
                     # TODO: should really be using self.code_graph.add_edge
                     self.code_graph._graph.add_edge(
                         child_node.id,

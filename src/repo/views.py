@@ -44,7 +44,8 @@ def http_to_ssh(url):
     return url  # Return original if not a GitHub HTTP(S) URL
 
 
-@repo_router.post("/repo/create", response_model=TaskResponse)
+# @repo_router.post("/repo/create", response_model=RepoResponse)
+@repo_router.post("/repo/create")
 async def create_repo(
     repo_in: RepoCreate,
     db_session: Session = Depends(get_db),
@@ -65,7 +66,9 @@ async def create_repo(
                 db_session.add(existing_repo)
                 db_session.commit()
 
-            return existing_repo
+            return RepoResponse(
+                owner=existing_repo.owner, repo_name=existing_repo.repo_name
+            )
 
         repo_dst = None
         index_persist_dir = INDEX_ROOT / repo_ident(repo_in.owner, repo_in.repo_name)
@@ -100,10 +103,9 @@ async def create_repo(
         db_session.add(repo)
         db_session.commit()
 
+        # print("TASKID: ", task.task_id, "STATUS: ", task.status)
         # need as_dict to convert cloned_folders to list
-        return TaskResponse(
-            task_id=task.task_id, status=task.status, result=task.result
-        )
+        return RepoResponse(owner=repo.owner, repo_name=repo.repo_name)
 
     except PrivateRepoError as e:
         raise ClientActionException(message="Private repo not yet supported", ex=e)

@@ -104,7 +104,18 @@ class RepoCreate(BaseModel):
         return self
 
 
-class RepoGetRequest(BaseModel):
+# Uniquely identifies a repo
+class RepoIdent(BaseModel):
+    owner: str
+    repo_name: str
+
+
+class RepoResponse(RepoIdent):
+    owner: str
+    repo_name: str
+
+
+class RepoGetRequest(RepoIdent):
     owner: str
     repo_name: str
 
@@ -115,11 +126,6 @@ class RepoDeleteRequest(RepoGetRequest):
 
 class RepoSummarizeRequest(RepoGetRequest):
     pass
-
-
-class RepoResponse(RepoBase):
-    owner: str
-    repo_name: str
 
 
 class RepoListResponse(RTFSBase):
