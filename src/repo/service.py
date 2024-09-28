@@ -58,11 +58,15 @@ def delete(*, db_session, curr_user: User, owner: str, repo_name: str) -> Repo:
     return None
 
 
+
 def list_repos(*, db_session, curr_user: User) -> Tuple[List[Repo], List[Repo]]:
     """
     Lists all the repos on the user's frontpage
     """
     recommended_repos = db_session.query(Repo).order_by(Repo.views.desc()).all()
+    
+    print(f"{Repo.repo_name} users: ", Repo.users)
+
     user_repos = db_session.query(Repo).filter(Repo.users.contains(curr_user)).all()
     return user_repos, recommended_repos
 

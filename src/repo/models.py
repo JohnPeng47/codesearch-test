@@ -104,29 +104,17 @@ class RepoCreate(BaseModel):
         return self
 
 
-# Uniquely identifies a repo
+# TODO: define this repoBase
 class RepoIdent(BaseModel):
     owner: str
     repo_name: str
 
 
 class RepoResponse(RepoIdent):
-    owner: str
-    repo_name: str
-
+    pass
 
 class RepoGetRequest(RepoIdent):
-    owner: str
-    repo_name: str
-
-
-class RepoDeleteRequest(RepoGetRequest):
     pass
-
-
-class RepoSummarizeRequest(RepoGetRequest):
-    pass
-
 
 class RepoListResponse(RTFSBase):
     user_repos: List[RepoResponse]

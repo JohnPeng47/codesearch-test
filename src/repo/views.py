@@ -17,8 +17,7 @@ from .models import (
     RepoCreate,
     RepoListResponse,
     RepoResponse,
-    RepoDeleteRequest,
-    RepoSummarizeRequest,
+    RepoGetRequest,
     repo_ident,
 )
 from .tasks import InitIndexGraphTask
@@ -136,11 +135,9 @@ def get_user_and_recommended_repos(
         ],
     )
 
-
-# TODO: should really
-@repo_router.post("/repo/summarize")
-async def summarize_repo(
-    request: RepoSummarizeRequest,
+@repo_router.post("/repo/files")
+async def get_repo_files(
+    request: RepoGetRequest,
     db_session: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     task_queue: TaskQueue = Depends(get_queue),
@@ -151,16 +148,38 @@ async def summarize_repo(
         owner=request.owner,
         repo_name=request.repo_name,
     )
+    print("Repo:" , repo)
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
 
-    summarized = summarize(repo.file_path, repo.graph_path)
-    return summarized
+    return GitRepo(repo.file_path).to_json()
+
+# TODO: should really
+@repo_router.post("/repo/summarize")
+async def summarize_repo(
+    request: RepoGetRequest,
+    db_session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    task_queue: TaskQueue = Depends(get_queue),
+):
+    repo = get_repo(
+        db_session=db_session,
+        curr_user=current_user,
+        owner=request.owner,
+        repo_name=request.repo_name,
+    )
+    print("Repo:" , repo)
+    # if not repo:
+    #     raise HTTPException(status_code=404, detail="Repository not found")
+
+    # summarized = summarize(repo.file_path, repo.graph_path)
+    # print("Generated summary: ", summarized)
+    # return summarized
 
 
 @repo_router.post("/repo/delete")
 async def delete_repo(
-    request: RepoDeleteRequest,
+    request: RepoGetRequest,
     db_session: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     task_queue: TaskQueue = Depends(get_queue),
