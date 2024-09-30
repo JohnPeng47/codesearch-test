@@ -5,7 +5,7 @@ from src.auth.service import get_current_user
 from src.auth.models import User
 from src.queue.core import get_queue, TaskQueue
 from src.queue.models import TaskResponse
-from src.queue.service import enqueue_task
+from src.queue.service import enqueue_task, enqueue_task_and_wait
 from src.exceptions import ClientActionException
 from src.models import HTTPSuccess
 from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT
@@ -84,7 +84,7 @@ async def create_repo(
                 "save_graph_path": save_graph_path,
             }
         )
-        enqueue_task(task_queue=task_queue, user_id=curr_user.id, task=task)
+        enqueue_task_and_wait(task_queue=task_queue, user_id=curr_user.id, task=task)
 
         # TODO: should maybe turn this into task as well
         # would need asyncSession to perform db_updates though
@@ -168,13 +168,12 @@ async def summarize_repo(
         owner=request.owner,
         repo_name=request.repo_name,
     )
-    print("Repo:" , repo)
-    # if not repo:
-    #     raise HTTPException(status_code=404, detail="Repository not found")
+    if not repo:
+        raise HTTPException(status_code=404, detail="Repository not found")
 
-    # summarized = summarize(repo.file_path, repo.graph_path)
-    # print("Generated summary: ", summarized)
-    # return summarized
+    summarized = summarize(repo.file_path, repo.graph_path)
+    print("Generated summary: ", summarized)
+    return summarized
 
 
 @repo_router.post("/repo/delete")
