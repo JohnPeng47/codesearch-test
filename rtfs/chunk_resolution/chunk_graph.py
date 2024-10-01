@@ -49,6 +49,7 @@ class ChunkGraph(CodeGraph):
         super().__init__(node_types=[ChunkNode, ClusterNode])
 
         self.fs = RepoFs(repo_path)
+        self.repo_path = repo_path
         self._graph = g
         self._repo_graph = RepoGraph(repo_path)
         self._file2scope = defaultdict(set)
@@ -359,13 +360,9 @@ class ChunkGraph(CodeGraph):
         return chunks_attached_to_clusters
 
     def _chunk_short_name(self, chunk_node: BaseNode, i: int) -> str:
-        # class_func = self._get_classes_and_funcs(
-        #     Path(chunk_node.metadata["file_path"]), head_scope
-        # )[0]
-
-        filename = "/".join(chunk_node.metadata["file_path"].split(os.sep)[-2:])
+        # take out the root path and only last two subdirectories
+        filename = "/".join(chunk_node.metadata["file_path"].split(os.sep)[1:-2])
         size = chunk_node.metadata["end_line"] - chunk_node.metadata["start_line"]
-        # return f"{filename}.{class_func}.{size}"
 
         return f"{filename}#{i}.{size}"
 

@@ -51,18 +51,6 @@ class RepoFs:
         Given a file abc/xyz, check if it exists in all_paths
         even if the abc is not aligned with the root of the path
         """
-        # import_path = self.repo_path / ns_path
-
-        # if import_path.is_dir():
-        #     init_path = (import_path / "__init__.py").resolve()
-        #     # print("MF: ", init_path)
-        #     if init_path.exists():
-        #         print("Helo?: ", init_path)
-        #         return init_path
-
-        # if import_path.with_suffix(SRC_EXT).exists():
-        #     return import_path.with_suffix(SRC_EXT).resolve()
-
         for path in self._all_paths:
             if self._skip_tests and path.name.startswith("test_"):
                 continue

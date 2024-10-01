@@ -1,6 +1,7 @@
 import yaml
 from typing import Dict, List
 import random
+import os
 
 from ..chunk_resolution.graph import (
     ClusterNode,
@@ -182,7 +183,9 @@ class Summarizer:
                     chunk_info = {
                         "id": child_node.id,
                         "og_id": child_node.og_id,
-                        "file_path": child_node.metadata.file_path.replace("\\", "/"),
+                        "file_path": os.path.relpath(child_node.metadata.file_path, self.code_graph.repo_path),
+                        "start_line": child_node.range.line_range()[0],
+                        "end_line": child_node.range.line_range()[1]
                     }
                     graph_json["chunks"].append(chunk_info)
                 elif child_node.kind == NodeKind.Cluster:

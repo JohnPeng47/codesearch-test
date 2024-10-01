@@ -26,6 +26,7 @@ from .graph import summarize
 import re
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from pathlib import Path
 
 from logging import getLogger
 
@@ -148,11 +149,10 @@ async def get_repo_files(
         owner=request.owner,
         repo_name=request.repo_name,
     )
-    print("Repo:" , repo)
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
 
-    return GitRepo(repo.file_path).to_json()
+    return GitRepo(Path(repo.file_path)).to_json()
 
 # TODO: should really
 @repo_router.post("/repo/summarize")
@@ -172,7 +172,7 @@ async def summarize_repo(
         raise HTTPException(status_code=404, detail="Repository not found")
 
     summarized = summarize(repo.file_path, repo.graph_path)
-    print("Generated summary: ", summarized)
+    # print("Generated summary: ", summarized)
     return summarized
 
 
