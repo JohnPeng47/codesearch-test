@@ -165,7 +165,7 @@ async def summarize_repo(
     repo = get_repo(
         db_session=db_session,
         curr_user=current_user,
-        owner=request.owner,
+        owner=request.owner,    
         repo_name=request.repo_name,
     )
     if not repo:
