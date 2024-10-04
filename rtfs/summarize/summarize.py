@@ -183,9 +183,10 @@ class Summarizer:
                     chunk_info = {
                         "id": child_node.id,
                         "og_id": child_node.og_id,
-                        "file_path": os.path.relpath(
-                            child_node.metadata.file_path, self.code_graph.repo_path
-                        ),
+                        "file_path": child_node.metadata.file_path,
+                        # "file_path": os.path.relpath(
+                        #     child_node.metadata.file_path, self.code_graph.repo_path
+                        # ),
                         "start_line": child_node.range.line_range()[0],
                         "end_line": child_node.range.line_range()[1],
                     }

@@ -40,6 +40,11 @@ class CodeGraph:
         return self._graph.has_edge(src, dst)
 
     def add_node(self, node: Node):
+        if node.kind not in self.node_types:
+            raise ValueError(
+                f"NodeType {node.kind} not supported for {self.__class__.__name__}"
+            )
+
         self._graph.add_node(node.id, **node.dict())
         return node.id
 

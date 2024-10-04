@@ -4,8 +4,6 @@ from llama_index.core.schema import BaseNode
 from typing import List, Tuple, Dict
 import os
 from collections import deque
-import json
-import yaml
 
 from rtfs.utils import dfs_json
 from rtfs.scope_resolution.capture_refs import capture_refs
@@ -73,6 +71,15 @@ class ChunkGraph(ClusterGraph):
         skipped_chunks = 0
 
         for i, chunk in enumerate(chunks, start=1):
+            # print("Repopath: ", repo_path)
+            # print("Metadata fullpath: ", chunk.metadata["file_path"])
+            # print(
+            #     "Metadata relpath: ",
+            #     os.path.relpath(repo_path, chunk.metadata["file_path"]),
+            # )
+            # chunk.metadata["file_path"] = os.path.relpath(
+            #     chunk.metadata["file_path"], repo_path
+            # )
             metadata = ChunkMetadata(**chunk.metadata)
             if skip_tests and metadata.file_name.startswith("test_"):
                 skipped_chunks += 1

@@ -185,6 +185,10 @@ class RepoGraph(CodeGraph):
 
                 else:
                     # match with exports
+                    # print("Export file: ", self.scopes_map.keys())
+                    # print("Export file: ", export_file)
+                    # print(export_file in self.scopes_map.keys())
+                    # print(str(export_file) in self.scopes_map.keys())
                     for name, def_scope in self._get_exports(
                         self.scopes_map[export_file], export_file
                     ):
@@ -200,9 +204,10 @@ class RepoGraph(CodeGraph):
         """
         scope_map = {}
         for path, file_content in fs.get_files_content():
+            print("Adding to scopemaps: ", str(path))
             # index by full path
             sg = build_scope_graph(file_content, language=LANGUAGE)
-            scope_map[path.resolve()] = sg
+            scope_map[path] = sg
 
         return scope_map
 

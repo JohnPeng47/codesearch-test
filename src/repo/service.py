@@ -1,15 +1,13 @@
 from src.auth.models import User
+from src.utils import rm_tree
 
 from .repository import GitRepo
 from .models import Repo
 
-import shutil
 from typing import List, Tuple
 from pathlib import Path
 from logging import getLogger
 import glob
-
-from src.utils import rm_tree
 
 logger = getLogger(__name__)
 

@@ -31,7 +31,7 @@ class RepoFs:
                 continue
 
             if file.suffix == SRC_EXT:
-                yield file, file.read_bytes()
+                yield file.relative_to(self.repo_path), file.read_bytes()
 
     def get_file_range(self, path: Path, range: TextRange) -> bytes:
         if path.suffix == SRC_EXT:
@@ -60,11 +60,11 @@ class RepoFs:
 
             if match_path == list(ns_path.parts):
                 if path.suffix == SRC_EXT:
-                    return path.resolve()
+                    return path.relative_to(self.repo_path)
                 elif path.is_dir():
                     init_path = (path / "__init__.py").resolve()
                     if init_path.exists():
-                        return init_path
+                        return init_path.relative_to(self.repo_path)
 
         return None
 

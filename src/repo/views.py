@@ -11,6 +11,7 @@ from src.models import HTTPSuccess
 from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT, ENV
 
 from rtfs.transforms.cluster import cluster
+from rtfs.cluster.graph import ClusterGraph
 
 from .service import list_repos, delete, get_repo
 from .repository import GitRepo, PrivateRepoError
@@ -88,7 +89,7 @@ async def create_repo(
                 "save_graph_path": save_graph_path,
             }
         )
-        cg = enqueue_task_and_wait(
+        cg: ClusterGraph = enqueue_task_and_wait(
             task_queue=task_queue, user_id=curr_user.id, task=task
         )
         cluster(cg)
@@ -104,6 +105,7 @@ async def create_repo(
             index_path=str(index_persist_dir),
             graph_path=str(save_graph_path),
             users=[curr_user],
+            cluster_files=cg.get_chunk_files(),
         )
 
         db_session.add(repo)
@@ -159,7 +161,13 @@ async def get_repo_files(
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
 
-    return GitRepo(Path(repo.file_path)).to_json()
+    full_files = GitRepo(Path(repo.file_path)).to_json()
+    filter_files = {
+        path: content
+        for path, content in full_files.items()
+        if path in repo.cluster_files
+    }
+    return filter_files
 
 
 # TODO: should really

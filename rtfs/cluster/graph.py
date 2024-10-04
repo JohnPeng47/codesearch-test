@@ -3,7 +3,7 @@ from typing import List, Dict
 from llama_index.core.schema import BaseNode
 import networkx as nx
 
-from rtfs.chunk_resolution.graph import ClusterNode, ChunkNode, ChunkMetadata
+from rtfs.chunk_resolution.graph import ClusterNode, ChunkNode, ChunkMetadata, NodeKind
 from rtfs.graph import CodeGraph
 
 
@@ -74,3 +74,10 @@ class ClusterGraph(CodeGraph):
         graph_dict["link_data"] = custom_node_link_data(self._graph)
 
         return graph_dict
+
+    # Utility methods
+    def get_chunk_files(self) -> List[str]:
+        return [
+            chunk_node.metadata.file_path
+            for chunk_node in self.filter_nodes({"kind": NodeKind.Chunk})
+        ]
