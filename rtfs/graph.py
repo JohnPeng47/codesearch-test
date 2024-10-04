@@ -40,6 +40,9 @@ class CodeGraph(DiGraph):
     def has_node(self, node_id: str) -> bool:
         return self._graph.has_node(node_id)
 
+    def has_edge(self, src: str, dst: str) -> bool:
+        return self._graph.has_edge(src, dst)
+
     def add_node(self, node: Node):
         self._graph.add_node(node.id, **node.dict())
         return node.id
@@ -62,7 +65,7 @@ class CodeGraph(DiGraph):
         return node_class(id=node_id, **node_data)
 
     def update_node(self, node: Node):
-        self._graph.nodes[node.id] = node.dict()
+        self.add_node(node)
 
     def children(self, node_id: str):
         return list(self._graph.predecessors(node_id))

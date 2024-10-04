@@ -9,6 +9,8 @@ from src.model_relations import user_repo
 import re
 from typing import List, Optional
 
+from .graph import GraphType
+
 
 def repo_ident(owner: str, repo_name: str):
     return f"{owner}_{repo_name}"
@@ -113,8 +115,14 @@ class RepoIdent(BaseModel):
 class RepoResponse(RepoIdent):
     pass
 
+
 class RepoGetRequest(RepoIdent):
     pass
+
+
+class RepoSummaryRequest(RepoGetRequest):
+    graph_type: GraphType
+
 
 class RepoListResponse(RTFSBase):
     user_repos: List[RepoResponse]

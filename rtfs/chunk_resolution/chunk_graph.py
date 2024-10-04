@@ -123,14 +123,14 @@ class ChunkGraph(CodeGraph):
         return cls(
             repo_path,
             cg,
-            cluster_roots=json_data["cluster_roots"],
-            cluster_depth=json_data["cluster_depth"],
+            cluster_roots=json_data.get("cluster_roots", []),
+            cluster_depth=json_data.get("cluster_depth", None),
         )
 
     def to_graph(self):
         return self._graph
 
-    def to_json(self, file_path: Path):
+    def to_json(self):
         """
         Special custom node_link_data class to handle ChunkMetadata
         """
@@ -167,11 +167,7 @@ class ChunkGraph(CodeGraph):
         graph_dict["cluster_roots"] = self._cluster_roots
         graph_dict["link_data"] = custom_node_link_data(self._graph)
 
-        print("Writing saved graph to: ", file_path)
-
-        with open(file_path, "w") as f:
-            graph_json = json.dumps(graph_dict)
-            f.write(graph_json)
+        return graph_dict
 
     # def get_node(self, node_id: str) -> ChunkNode:
     #     data = self._graph._node.get(node_id, None)

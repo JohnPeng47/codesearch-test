@@ -1,11 +1,10 @@
 import sys
 
-sys.path.append("rtfs_rewrite")
-
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List
 
+from ..rtfs.chunk_resolution.graph import ChunkNode, ChunkMetadata
 from rtfs_rewrite.ts import cap_ts_queries, TSLangs
 from rtfs_rewrite.fs import RepoFs
 from rtfs_rewrite.ingest import ingest
@@ -13,6 +12,7 @@ from rtfs_rewrite.ingest import ingest
 from networkx import DiGraph
 import networkx as nx
 import json
+
 
 
 # define a cluster interface to search code over
@@ -34,24 +34,31 @@ repo_path = "test_repos/aider"
 chunks = ingest(repo_path)
 graph = DiGraph()
 
-all_chunks: List[Chunk] = []
+all_chunks: List[ChunkNode] = []
 for chunk in chunks:
-    curr_file = Chunk(Path(chunk.metadata["file_path"]), id=chunk.node_id)
-    for node, capture_name in cap_ts_queries(
-        bytearray(chunk.get_content(), encoding="utf-8"), TSLangs.PYTHON
-    ):
-        match capture_name:
-            case "name.definition.class":
-                curr_file.definitions.append(node.text.decode())
-
-            case "name.definition.function":
-                curr_file.definitions.append(node.text.decode())
-
-            case "name.reference.call":
-                curr_file.references.append(node.text.decode())
-
-    all_chunks.append(curr_file)
-    graph.add_node(chunk.node_id)
+  chunk_node = ChunkNode(
+    id=chunk.node_id,
+    og_id=chunk.node_id,
+    metadata=ChunkMetadata(**chunk.metadata),
+    content=chunk.get_content()
+  )
+  definitions = []
+  references = []
+  for node, capture_name in cap_ts_queries(
+    bytearray(chunk.get_content(), encoding="utf-8"), TSLangs.PYTHON
+  ):
+    match capture_name:
+      case "name.definition.class":
+        definitions.append(node.text.decode())
+      case "name.definition.function":
+        definitions.append(node.text.decode())
+      case "name.reference.call":
+        references.append(node.text.decode())
+  
+  chunk_node.definitions = definitions
+  chunk_node.references = references
+  all_chunks.append(chunk_node)
+  graph.add_node(chunk_node.id)
 
 
 # build relation ships
@@ -65,8 +72,9 @@ for c1 in all_chunks:
             ):
                 graph.add_edge(c1.id, c2.id, ref=ref)
 
+graph_dict = {}
 # Convert the graph to a dictionary
-graph_dict = nx.node_link_data(graph)
+graph_dict["link_data"] = nx.node_link_data(graph)
 
 # Write the graph to a JSON file
 with open("repo_graph.json", "w") as json_file:

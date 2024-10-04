@@ -18,6 +18,7 @@ from .models import (
     RepoListResponse,
     RepoResponse,
     RepoGetRequest,
+    RepoSummaryRequest,
     repo_ident,
 )
 from .tasks import InitIndexGraphTask
@@ -136,6 +137,7 @@ def get_user_and_recommended_repos(
         ],
     )
 
+
 @repo_router.post("/repo/files")
 async def get_repo_files(
     request: RepoGetRequest,
@@ -154,10 +156,11 @@ async def get_repo_files(
 
     return GitRepo(Path(repo.file_path)).to_json()
 
+
 # TODO: should really
 @repo_router.post("/repo/summarize")
 async def summarize_repo(
-    request: RepoGetRequest,
+    request: RepoSummaryRequest,
     db_session: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     task_queue: TaskQueue = Depends(get_queue),
@@ -165,13 +168,15 @@ async def summarize_repo(
     repo = get_repo(
         db_session=db_session,
         curr_user=current_user,
-        owner=request.owner,    
+        owner=request.owner,
         repo_name=request.repo_name,
     )
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
 
-    summarized = summarize(repo.file_path, repo.graph_path)
+    summarized = summarize(
+        repo.index_path, repo.file_path, repo.graph_path, request.graph_type
+    )
     # print("Generated summary: ", summarized)
     return summarized
 
