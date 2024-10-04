@@ -1,10 +1,7 @@
 from dataclasses import dataclass, field
-from networkx import DiGraph
+from networkx import MultiDiGraph
 from typing import List, Type, Dict, Optional
 import uuid
-
-# we actually cant convert to pydantic dataclass because
-# of perf reasons
 
 
 class MultipleNodesException(Exception):
@@ -31,10 +28,9 @@ class Edge(DictMixin):
     dst: str
 
 
-class CodeGraph(DiGraph):
-    def __init__(self, *, node_types: List[Type[Node]]):
-        super().__init__()
-        self._graph = DiGraph()
+class CodeGraph:
+    def __init__(self, *, graph=MultiDiGraph, node_types: List[Type[Node]]):
+        self._graph = graph
         self.node_types: Dict[str, Type[Node]] = {nt.__name__: nt for nt in node_types}
 
     def has_node(self, node_id: str) -> bool:
@@ -48,7 +44,6 @@ class CodeGraph(DiGraph):
         return node.id
 
     def add_edge(self, edge: Edge):
-        print("Adding edge1: ", edge.src, edge.dst)
         self._graph.add_edge(edge.src, edge.dst, **edge.dict())
 
     def get_node(self, node_id: str) -> Node:

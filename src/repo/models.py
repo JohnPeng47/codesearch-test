@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, JSON, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, JSON, ForeignKey, Boolean, ARRAY
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel, Field, root_validator, field_validator, model_validator
 
@@ -16,6 +16,8 @@ def repo_ident(owner: str, repo_name: str):
     return f"{owner}_{repo_name}"
 
 
+# TODO: redefine all backend models using FastAPI SQLModel
+# create separate path objects for the file paths, especially graph_path
 class Repo(Base):
     """
     Stores configuration for a repository
@@ -29,6 +31,7 @@ class Repo(Base):
     url = Column(String)
     language = Column(String)
     repo_size = Column(Integer)
+    cluster_files = Column(ARRAY(String))
 
     # Paths
     file_path = Column(String)

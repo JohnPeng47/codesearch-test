@@ -2,6 +2,7 @@ import os
 import json
 from pathlib import Path
 from enum import Enum
+import shutil
 
 from moatless.index import CodeIndex
 
@@ -11,6 +12,7 @@ from rtfs.summarize.summarize import Summarizer
 from rtfs.transforms.cluster import cluster
 from rtfs.chunk_resolution.chunk_graph import ChunkGraph
 from rtfs.aider_graph.aider_graph import AiderGraph
+from src.utils import rm_tree
 
 
 class GraphType(str, Enum):
@@ -24,27 +26,33 @@ def get_or_create_chunk_graph(
     graph_path = f"{graph_path}_{type}.json"
 
     nodes = code_index._docstore.docs.values()
-    if os.path.exists(graph_path):
-        with open(graph_path, "r") as f:
-            graph_dict = json.load(f)
+    try:
+        if os.path.exists(graph_path):
+            with open(graph_path, "r") as f:
+                graph_dict = json.load(f)
 
-        if type == GraphType.STANDARD:
-            cg = ChunkGraph.from_json(Path(repo_path), graph_dict)
-        elif type == GraphType.AIDER:
-            cg = AiderGraph.from_json(Path(repo_path), graph_dict)
-        return cg
+            if type == GraphType.STANDARD:
+                cg = ChunkGraph.from_json(Path(repo_path), graph_dict)
+            elif type == GraphType.AIDER:
+                cg = AiderGraph.from_json(Path(repo_path), graph_dict)
+            return cg
 
-    else:
-        if type == GraphType.STANDARD:
-            cg = ChunkGraph.from_chunks(Path(repo_path), nodes)
-        elif type == GraphType.AIDER:
-            print("Creating AiderGraph")
-            cg = AiderGraph.from_chunks(repo_path, nodes)
+        else:
+            if type == GraphType.STANDARD:
+                cg = ChunkGraph.from_chunks(Path(repo_path), nodes)
+            elif type == GraphType.AIDER:
+                cg = AiderGraph.from_chunks(repo_path, nodes)
 
-        with open(graph_path, "w") as f:
-            json.dump(cg.to_json(), f)
+            with open(graph_path, "w") as f:
+                json.dump(cg.to_json(), f)
 
-        return cg
+            return cg
+    except Exception as e:
+        print("EXCEPTION: ", e)
+        if os.path.exists(graph_path):
+            rm_tree(graph_path)
+
+        raise e
 
 
 def summarize(

@@ -59,7 +59,9 @@ class TaskQueue:
 
             self.queue[user_id].append(task)
             completion_event = Event()
-            future = self.executor.submit(self._execute_and_complete_with_event, task, user_id, completion_event)
+            future = self.executor.submit(
+                self._execute_and_complete_with_event, task, user_id, completion_event
+            )
 
         # Wait for the task to complete
         completion_event.wait()
@@ -70,7 +72,9 @@ class TaskQueue:
         except Exception as e:
             raise e
 
-    def _execute_and_complete_with_event(self, task: Task, user_id: int, completion_event: Event) -> Any:
+    def _execute_and_complete_with_event(
+        self, task: Task, user_id: int, completion_event: Event
+    ) -> Any:
         try:
             result = self._execute_and_complete(task, user_id)
             return result

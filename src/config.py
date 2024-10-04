@@ -11,7 +11,7 @@ ENV = config("ENV", default="dev")
 CODESEARCH_DIR = (
     "/home/ubuntu"
     if ENV == "release"
-    else r"C:\Users\jpeng\Documents\projects\codesearch-backend\data"
+    else r"C:\Users\jpeng\Documents\projects\codesearch-data"
 )
 PORT = int(config("PORT", default=3000))
 

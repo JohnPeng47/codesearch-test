@@ -35,12 +35,11 @@ class RepoGraph(CodeGraph):
     """
 
     def __init__(self, path: Path):
-        super().__init__(node_types=[RepoNode])
+        super().__init__(graph=DiGraph(), node_types=[RepoNode])
         if not path.exists():
             raise FileNotFoundError(f"Path {path} does not exist")
 
         self.fs = RepoFs(path)
-        self._graph = DiGraph()
         self.scopes_map: Dict[Path, ScopeGraph] = self._construct_scopes(self.fs)
 
         self._imports: Dict[Path, List[LocalImport]] = {}

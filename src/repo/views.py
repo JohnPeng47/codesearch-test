@@ -8,7 +8,9 @@ from src.queue.models import TaskResponse
 from src.queue.service import enqueue_task, enqueue_task_and_wait
 from src.exceptions import ClientActionException
 from src.models import HTTPSuccess
-from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT
+from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT, ENV
+
+from rtfs.transforms.cluster import cluster
 
 from .service import list_repos, delete, get_repo
 from .repository import GitRepo, PrivateRepoError
@@ -86,7 +88,10 @@ async def create_repo(
                 "save_graph_path": save_graph_path,
             }
         )
-        enqueue_task_and_wait(task_queue=task_queue, user_id=curr_user.id, task=task)
+        cg = enqueue_task_and_wait(
+            task_queue=task_queue, user_id=curr_user.id, task=task
+        )
+        cluster(cg)
 
         # TODO: should maybe turn this into task as well
         # would need asyncSession to perform db_updates though
@@ -177,7 +182,6 @@ async def summarize_repo(
     summarized = summarize(
         repo.index_path, repo.file_path, repo.graph_path, request.graph_type
     )
-    # print("Generated summary: ", summarized)
     return summarized
 
 
@@ -202,19 +206,41 @@ async def delete_repo(
     return HTTPSuccess()
 
 
-# @repo_router.delete("/repo/clean/{repo_name}", response_model=HTTPSuccess)
-# def clean_repo(
-#     repo_name: str,
-#     db_session: Session = Depends(get_db),
-#     current_user: CowboyUser = Depends(get_current_user),
-# ):
-#     cleaned = clean(db_session=db_session, repo_name=repo_name, curr_user=current_user)
+@repo_router.get("/repo/delete_all")
+async def delete_all_repos(
+    db_session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    task_queue: TaskQueue = Depends(get_queue),
+):
+    if ENV != "dev":
+        raise Exception("This endpoint is only available in dev environment.")
 
-#     if not cleaned:
-#         raise HTTPException(
-#             status_code=400, detail="A repo with this name does not exists."
-#         )
-#     return HTTPSuccess()
+    def delete_all(db_session: Session, curr_user: User) -> int:
+        repos = db_session.query(Repo).all()
+        deleted_count = 0
+        for repo in repos:
+            try:
+                delete(
+                    db_session=db_session,
+                    curr_user=current_user,
+                    owner=repo.owner,
+                    repo_name=repo.repo_name,
+                )
+                deleted_count += 1
+            except Exception as e:
+                print(f"Error deleting repository {repo.repo_name}: {str(e)}")
+
+        db_session.commit()
+        return deleted_count
+
+    deleted_count = delete_all(
+        db_session=db_session,
+        curr_user=current_user,
+    )
+    if deleted_count == 0:
+        raise HTTPException(status_code=400, detail="No repositories found to delete.")
+
+    return HTTPSuccess(detail=f"Successfully deleted {deleted_count} repositories.")
 
 
 # @repo_router.get("/repo/get/{repo_name}", response_model=RepoGet)

@@ -270,6 +270,20 @@ if __name__ == "__main__":
     # start_sync_thread(db_session, task_queue)
 
     # logfire.configure()
+    import socket
+
+    def is_port_open(port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(("0.0.0.0", port))
+                return True
+            except socket.error:
+                return False
+
+    if not is_port_open(PORT):
+        raise RuntimeError(
+            f"Port {PORT} is not available. Please choose a different port."
+        )
 
     uvicorn.run(
         "main:app",
@@ -277,7 +291,7 @@ if __name__ == "__main__":
         port=PORT,
         # workers=2,
         # workers=calculate_workers(),
-        reload=True,
-        reload_excludes=["data"],
+        # reload=True,
+        # reload_excludes=["data"],
         # log_config=config,
     )

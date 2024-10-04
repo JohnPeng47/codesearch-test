@@ -20,4 +20,6 @@ class InitIndexGraphTask(Task):
             str(repo_dst),
             str(index_persist_dir),
         )
-        get_or_create_chunk_graph(code_index, repo_dst, save_graph_path, graph_type)
+        return get_or_create_chunk_graph(
+            code_index, repo_dst, save_graph_path, graph_type
+        )

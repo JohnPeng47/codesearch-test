@@ -16,6 +16,7 @@ from rtfs.utils import TextRange
 from rtfs.graph import Node, CodeGraph
 
 from rtfs.models import OpenAIModel, BaseModel
+from rtfs.cluster.graph import ClusterGraph
 
 from .graph import (
     ChunkMetadata,
@@ -38,26 +39,20 @@ logger = logging.getLogger(__name__)
 
 
 # DESIGN_TODO: make a generic Graph object to handle add/update Node
-class ChunkGraph(CodeGraph):
+class ChunkGraph(ClusterGraph):
     def __init__(
         self,
         repo_path: Path,
-        g: MultiDiGraph,
+        graph: MultiDiGraph,
         cluster_roots=[],
-        cluster_depth=None,
     ):
-        super().__init__(node_types=[ChunkNode, ClusterNode])
+        super().__init__(graph=graph, repo_path=repo_path, cluster_roots=cluster_roots)
 
         self.fs = RepoFs(repo_path)
-        self.repo_path = repo_path
-        self._graph = g
         self._repo_graph = RepoGraph(repo_path)
         self._file2scope = defaultdict(set)
         self._chunkmap: Dict[Path, List[ChunkNode]] = defaultdict(list)
         self._lm: BaseModel = OpenAIModel()
-
-        self._cluster_roots = cluster_roots
-        self._cluster_depth = cluster_depth
 
     # TODO: design decisions
     # turn import => export mapping into a function
@@ -98,8 +93,6 @@ class ChunkGraph(CodeGraph):
         if len(chunk_names) != len(chunks) - skipped_chunks:
             raise ValueError("Collision has occurred in chunk names")
 
-        print(len(cg.get_all_nodes()))
-
         # main loop to build graph
         for chunk_node in cg.get_all_nodes():
             # chunk -> range -> scope
@@ -113,97 +106,11 @@ class ChunkGraph(CodeGraph):
 
         return cg
 
-    @classmethod
-    def from_json(cls, repo_path: Path, json_data: Dict):
-        cg = node_link_graph(json_data["link_data"])
-        for _, node_data in cg.nodes(data=True):
-            if "metadata" in node_data:
-                node_data["metadata"] = ChunkMetadata(**node_data["metadata"])
-
-        return cls(
-            repo_path,
-            cg,
-            cluster_roots=json_data.get("cluster_roots", []),
-            cluster_depth=json_data.get("cluster_depth", None),
-        )
-
-    def to_graph(self):
-        return self._graph
-
-    def to_json(self):
-        """
-        Special custom node_link_data class to handle ChunkMetadata
-        """
-
-        def custom_node_link_data(G: MultiDiGraph):
-            data = {
-                "directed": G.is_directed(),
-                "multigraph": G.is_multigraph(),
-                "graph": G.graph,
-                "nodes": [],
-                "links": [],
-            }
-
-            for n, node_data in G.nodes(data=True):
-                node_dict = node_data.copy()
-                if "metadata" in node_dict and isinstance(
-                    node_dict["metadata"], ChunkMetadata
-                ):
-                    node_dict["metadata"] = node_dict["metadata"].to_json()
-
-                node_dict["id"] = n
-                data["nodes"].append(node_dict)
-
-            for u, v, edge_data in G.edges(data=True):
-                edge = edge_data.copy()
-                edge["source"] = u
-                edge["target"] = v
-                data["links"].append(edge)
-
-            return data
-
-        graph_dict = {}
-        graph_dict["cluster_depth"] = self._cluster_depth
-        graph_dict["cluster_roots"] = self._cluster_roots
-        graph_dict["link_data"] = custom_node_link_data(self._graph)
-
-        return graph_dict
-
-    # def get_node(self, node_id: str) -> ChunkNode:
-    #     data = self._graph._node.get(node_id, None)
-    #     if not data:
-    #         return None
-
-    #     # BUG: hacky fix but for some reason node_link_data stores
-    #     # the data wihtout id
-    #     if data.get("id", None):
-    #         del data["id"]
-
-    #     if data["kind"] == NodeKind.Cluster:
-    #         node = ClusterNode(id=node_id, **data)
-    #     elif data["kind"] == NodeKind.Chunk:
-    #         node = ChunkNode(id=node_id, **data)
-
-    #     return node
-
-    def remove_node(self, node_id: str):
-        """
-        Remove a node from the graph by its ID.
-
-        Parameters:
-        node_id (str): The ID of the node to be removed.
-        """
-        if node_id in self._graph:
-            self._graph.remove_node(node_id)
-        else:
-            raise ValueError(f"Node with ID {node_id} does not exist in the graph.")
-
+    # TODO: confirm that node.filter_nodes({}) returns all nodes, then refactor this method
     def get_all_nodes(self) -> List[ChunkNode]:
         return [self.get_node(n) for n in self._graph.nodes]
 
-    def update_node(self, chunk_node: ChunkNode):
-        self.add_node(chunk_node)
-
+    # TODO: REST OF THIS CODE SHOULD BE INSIDE CLUSTER NODE
     # TODO: use this to build the call graph
     # find unique paths:
     # find all root nodes (no incoming edges)
