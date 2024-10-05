@@ -17,51 +17,6 @@ from rtfs.graph import CodeGraph
 from rtfs.utils import VerboseSafeDumper
 from rtfs.models import OpenAIModel, extract_yaml
 
-SUMMARY_FIRST_PASS = """
-The following chunks of code are grouped into the same feature.
-I want you to respond with a yaml object that contains the following fields: 
-- first come up with a descriptive title that best captures the role that these chunks of code
-play in the overall codebase. 
-- next, write a short concise but descriptive summary of the chunks, thats 1-2 sentences long
-- finally, take a list 4 of important functions/classes as key_variables
-
-Your yaml should take the following format:
-
-title: str
-summary: str
-key_variables: List[str]
-
-Here is the code:
-{code}
-"""
-
-REORGANIZE_CLUSTERS = """
-You are given a following a set of clusters that encapsulate different features in the codebase. Take these clusters
-and group them into logical categories, then come up with a name for each category
-
-Here are some more precise instructions:
-1. Carefully read through the entire list of features and functionalities.
-2. The categories must be mutually exclusive and collectively exhaustive.
-3. Place each feature or functionality under the most appropriate category
-4. Each category should not have less than 2 children clusters
-5. Make sure you generated name is different from any of the existing Cluster names
-
-Your generated output should only contain the title of your created categories and their list of children titles, without
-including any other information such as the children's summary
-
-Return your output in a yaml object, with the following format:
-
-- category: str
-    children: []
-- category: str
-    children: []
-- category: str
-    children: []
-...
-
-{cluster_yaml}
-"""
-
 
 def get_cluster_id():
     return random.randint(1, 10000000)

@@ -68,6 +68,7 @@ def summarize(
 
     cluster(cg)
 
+    # TODO: move summarizer to ClusterGraph
     summarizer = Summarizer(cg)
     summarizer.summarize()
     summarizer.gen_categories()
