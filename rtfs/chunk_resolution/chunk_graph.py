@@ -11,7 +11,6 @@ from rtfs.scope_resolution.graph_types import ScopeID
 from rtfs.repo_resolution.repo_graph import RepoGraph, RepoNodeID, repo_node_id
 from rtfs.fs import RepoFs
 from rtfs.utils import TextRange
-from rtfs.graph import Node, CodeGraph
 
 from rtfs.models import OpenAIModel, BaseModel
 from rtfs.cluster.graph import ClusterGraph

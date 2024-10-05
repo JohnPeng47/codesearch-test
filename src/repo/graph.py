@@ -2,17 +2,19 @@ import os
 import json
 from pathlib import Path
 from enum import Enum
-import shutil
 
 from moatless.index import CodeIndex
 
 from src.index.service import get_or_create_index
-
 from rtfs.summarize.summarize import Summarizer
 from rtfs.transforms.cluster import cluster
 from rtfs.chunk_resolution.chunk_graph import ChunkGraph
 from rtfs.aider_graph.aider_graph import AiderGraph
 from src.utils import rm_tree
+
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 class GraphType(str, Enum):
@@ -70,6 +72,6 @@ def summarize(
     summarizer.summarize()
     summarizer.gen_categories()
 
-    # print("Clusters: ", json.dumps(summarizer.clusters_to_json(), indent=2))
+    logger.info(f"Summarizing stats: {graph_type} for {repo_path}: \n{cg.get_stats()}")
 
     return summarizer.to_json()
