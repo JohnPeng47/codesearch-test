@@ -5,13 +5,16 @@ from src.auth.service import get_current_user
 from src.auth.models import User
 from src.queue.core import get_queue, TaskQueue
 from src.queue.models import TaskResponse
+from src.index.service import get_or_create_index
 from src.queue.service import enqueue_task, enqueue_task_and_wait
 from src.exceptions import ClientActionException
 from src.models import HTTPSuccess
 from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT, ENV
 
+from rtfs.summarize.summarize import Summarizer
 from rtfs.transforms.cluster import cluster
 from rtfs.cluster.graph import ClusterGraph
+from rtfs.exceptions import ContextLengthExceeded
 
 from .service import list_repos, delete, get_repo
 from .repository import GitRepo, PrivateRepoError
@@ -25,8 +28,9 @@ from .models import (
     repo_ident,
 )
 from .tasks import InitIndexGraphTask
-from .graph import summarize
+from .graph import summarize, GraphType, get_or_create_chunk_graph
 
+import json
 import re
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -48,6 +52,8 @@ def http_to_ssh(url):
     return url  # Return original if not a GitHub HTTP(S) URL
 
 
+# TODO: rewrite repo using class based approach and set the path
+# as methods
 # @repo_router.post("/repo/create", response_model=RepoResponse)
 @repo_router.post("/repo/create")
 async def create_repo(
@@ -187,10 +193,43 @@ async def summarize_repo(
     if not repo:
         raise HTTPException(status_code=404, detail="Repository not found")
 
-    summarized = summarize(
-        repo.index_path, repo.file_path, repo.graph_path, request.graph_type
+    summary_path = (
+        repo.summary_path + "_" + request.graph_type if repo.summary_path else None
     )
-    return summarized
+    if summary_path and Path(summary_path).exists():
+        with open(summary_path, "r") as f:
+            return json.loads(f.read())
+
+    # summarization logic
+    code_index = get_or_create_index(repo.file_path, repo.index_path)
+    cg = get_or_create_chunk_graph(
+        code_index, repo.file_path, repo.graph_path, request.graph_type
+    )
+    cluster(cg)
+
+    summarizer = Summarizer(cg)
+    # try:
+    summarizer.summarize()
+    summarizer.gen_categories()
+    # TODO: figure out how to handle
+    # except ContextLengthExceeded as e:
+    #     raise HTTPException(status_code=400, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
+
+    logger.info(
+        f"Summarizing stats: {request.graph_type} for {repo.file_path}: \n{cg.get_stats()}"
+    )
+
+    save_graph_path = GRAPH_ROOT / repo_ident(repo.owner, repo.repo_name)
+    summary_json = summarizer.to_json()
+    with open(save_graph_path, "w") as f:
+        f.write(json.dumps(summary_json))
+
+    repo.summary_path = str(save_graph_path)
+    db_session.commit()
+
+    return summary_json
 
 
 @repo_router.post("/repo/delete")

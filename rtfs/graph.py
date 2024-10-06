@@ -21,6 +21,9 @@ class Node(DictMixin):
     def get_content(self):
         raise NotImplementedError(f"Method not implemented on {self.__name__}")
 
+    def __hash__(self):
+        return hash(self.id)
+
 
 @dataclass
 class Edge(DictMixin):

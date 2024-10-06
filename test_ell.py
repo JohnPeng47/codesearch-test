@@ -16,7 +16,7 @@ class EngagementAdvice(BaseModel):
 ell.init(store="./logdir", autocommit=True)
 
 
-@ell.complex(model="gpt-4o-2024-08-06", response_format=EngagementAdvice)
+@ell.complex(model="gpt-3.5-turbo-0125")
 # @retry(
 #     wait=wait_random_exponential(min=1, max=15),
 #     reraise=True,
@@ -27,5 +27,8 @@ def hello(name: str):
     return f"Return some questions about a milliatry engagement in {name} with structured outputs"
 
 
-greeting = hello("Sam Altman")
-print(greeting.parsed)
+if __name__ == "__main__":
+    import sys
+
+    with open("test") as f:
+        print(hello(f.read()))
