@@ -109,11 +109,15 @@ if it makes sense. Otherwise create a new category for the code functionality.
 Your generated output should only contain the title of categories along with the list of their children titles, added from the list
 of code functionalities provided. Do not include any other information such as the children's summary
 
-Here are the set of categories:
+Here are the set of categories.
 {categories}
 
 Here are the set of code functionalities:
 {clusters}
+
+Remember, if:
+1. None of the code categories fit
+2. If creating a new category fits the code functionalities better, then create a new cateogry and add it to the list
     """.format(
         categories=categories,
         clusters=clusters,

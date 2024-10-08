@@ -14,10 +14,9 @@ from src.config import REPOS_ROOT, INDEX_ROOT, GRAPH_ROOT, ENV
 from rtfs.summarize.summarize import Summarizer
 from rtfs.transforms.cluster import cluster
 from rtfs.cluster.graph import ClusterGraph
-from rtfs.exceptions import ContextLengthExceeded
 
 from .service import list_repos, delete, get_repo
-from .repository import GitRepo, PrivateRepoError
+from .repository import GitRepo, PrivateRepoError, RepoSizeExceededError
 from .models import (
     Repo,
     RepoCreate,
@@ -28,7 +27,7 @@ from .models import (
     repo_ident,
 )
 from .tasks import InitIndexGraphTask
-from .graph import summarize, GraphType, get_or_create_chunk_graph
+from .graph import get_or_create_chunk_graph
 
 import json
 import re
@@ -85,7 +84,8 @@ async def create_repo(
         repo_dst = REPOS_ROOT / repo_ident(repo_in.owner, repo_in.repo_name)
         save_graph_path = GRAPH_ROOT / repo_ident(repo_in.owner, repo_in.repo_name)
 
-        git_repo = GitRepo.clone_repo(repo_dst, repo_in.url)
+        max_size = 10000000000 * 1.5  # size of aider
+        git_repo = GitRepo.clone_repo(repo_dst, repo_in.url, max_size, "Python")
 
         # TODO: add error logging
         task = InitIndexGraphTask(
@@ -120,6 +120,12 @@ async def create_repo(
         # print("TASKID: ", task.task_id, "STATUS: ", task.status)
         # need as_dict to convert cloned_folders to list
         return RepoResponse(owner=repo.owner, repo_name=repo.repo_name)
+
+    except RepoSizeExceededError as e:
+        raise ClientActionException(
+            message="Repository size exceeded limit. Please try a smaller repository.",
+            ex=e,
+        )
 
     except PrivateRepoError as e:
         raise ClientActionException(message="Private repo not yet supported", ex=e)

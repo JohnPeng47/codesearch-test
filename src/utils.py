@@ -7,7 +7,7 @@ import functools
 import os
 from contextlib import contextmanager
 
-from src.logger import testgen_logger
+from logging import getLogger
 
 import os
 import time
@@ -19,6 +19,8 @@ if platform.system() == "Windows":
     import win32con
     import pywintypes
     import errno
+
+logger = getLogger(__name__)
 
 
 def delete_windows(path, max_attempts=5, delay=1):
@@ -55,7 +57,9 @@ def delete_windows(path, max_attempts=5, delay=1):
                 print(f"Error deleting path: {e}")
                 return False
 
-        print(f"Attempt {attempt + 1} failed. Retrying...")
+        logger.error(
+            f"Attempt delete {path}, attempt {attempt + 1} failed. Retrying..."
+        )
         time.sleep(delay)
 
     print(f"Failed to delete {path} after {max_attempts} attempts.")

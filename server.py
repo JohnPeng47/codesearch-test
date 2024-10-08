@@ -105,9 +105,7 @@ def create_app(sql_engine: Engine):
 
             return response
 
-
     token_registry = set()
-
 
     class DBMiddleware(BaseHTTPMiddleware):
         async def dispatch(self, request: Request, call_next):
@@ -161,6 +159,7 @@ def create_app(sql_engine: Engine):
             return response
 
     task_queue = TaskQueue()
+
     class AddTaskQueueMiddleware(BaseHTTPMiddleware):
         async def dispatch(
             self, request: Request, call_next: RequestResponseEndpoint
@@ -169,7 +168,9 @@ def create_app(sql_engine: Engine):
             response = await call_next(request)
             return response
 
-    app = FastAPI(exception_handlers=exception_handlers, openapi_url="/docs/openapi.json")
+    app = FastAPI(
+        exception_handlers=exception_handlers, openapi_url="/docs/openapi.json"
+    )
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -180,6 +181,7 @@ def create_app(sql_engine: Engine):
 
     # configure serving static folders
     app.mount("/static", StaticFiles(directory=os.path.join(STATIC_DIR, "static")))
+
     @app.get("/")
     def read_root():
         with open(os.path.join(STATIC_DIR, "index.html"), "r") as f:

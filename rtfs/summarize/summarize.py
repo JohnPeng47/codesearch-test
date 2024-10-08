@@ -113,7 +113,6 @@ class Summarizer:
                         )
                         generated_child_clusters.append(child_node.id)
 
-                generated_child_clusters = generated_child_clusters[:4]
                 # TODO: if more, we dont really care, can prune
                 if len(og_clusters) > len(generated_child_clusters):
                     missing = set(og_clusters) - set(generated_child_clusters)
